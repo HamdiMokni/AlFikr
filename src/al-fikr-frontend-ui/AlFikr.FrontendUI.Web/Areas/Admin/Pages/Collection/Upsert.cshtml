@@ -1,0 +1,61 @@
+﻿@page "{id:int?}"
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Collection.UpsertModel
+@{
+}
+
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+            <form id="collectionForm" asp-controller="Collection" asp-action="Upsert">
+                <div class="text-danger text-right" asp-validation-summary="ModelOnly"></div>
+                <div class="card-header">
+                    <h4>@(Model.Collection?.Id != null ? @localizer["Editer"] : @localizer["Ajouter"]) @localizer["collection"]</h4>
+                </div>
+                <input type="hidden" asp-for="Collection.Id" />
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Editeur"]</label>&nbsp;<span style="color:red;">*</span>
+                                <select asp-for="Collection.IdEditor" class="form-control" asp-items="@(new SelectList(Model.Editors, "Id", "Name"))">
+                                    <option value="" selected disabled hidden>-- @localizer["Select"] --</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Titre"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Collection.Title" class="form-control" />
+                                <span asp-validation-for="Collection.Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Intitulé Arabe"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Collection.ArTitle" class="form-control" />
+                                <span asp-validation-for="Collection.ArTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Abrévation"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Collection.ShortTitle" class="form-control" />
+                                <span asp-validation-for="Collection.ShortTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>@localizer["Description"]</label>
+                                <textarea asp-for="Collection.Description" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a href=javascript:history.go(-1) class="btn btn-secondary">@localizer["Annuler"]</a>
+                    <button type="submit" class="btn btn-primary">@localizer["Enregistrer"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

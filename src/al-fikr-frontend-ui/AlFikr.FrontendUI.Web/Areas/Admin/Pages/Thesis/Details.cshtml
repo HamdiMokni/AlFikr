@@ -1,0 +1,198 @@
+﻿@page "{id:int?}"
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Thesis.DetailsModel
+@{
+}
+<partial name="ErrorMessageAlert" model="Model.ErrorText" />
+<div class="container-fluid" style="padding-top:1%">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>@Model.Thesis?.OriginalTitle</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div flashes></div>
+                </div>
+                <div class="col-xs-12 col-sm-5 col-md-3 col-lg-3" style="height:400px;padding:1% 0% 0% 1%">
+                    <img style="width: 100%; height: 100%;" src="@Url.Content($"~/images/coverPage/{Model.Thesis?.Id}.jpg")" alt="Thesis Image">
+                </div>
+                <div class="col-xs-12 col-sm-7 col-md-9 col-lg-9" style="padding-left:1%;padding-top:1%">
+                    <h2>@Model.Thesis?.OriginalTitle</h2>
+                    <div class="float-right">
+                        <a href="/Admin/Thesis/upsert?id=@Model.Thesis.Id" class="btn btn-secondary">Editer</a>
+                    </div>
+                    @if (Model.Thesis != null)
+                    {
+                        <p><strong>@localizer["Nombre des pages:"]</strong> @Model.Thesis.NbPages pages</p>
+                        <p><strong>@localizer["Date de défense:"]</strong> @Model.Thesis.DefenceDate</p>
+                        <p><strong>@localizer["Editeur:"]</strong> @Model.Editor.Name</p>
+                        <p><strong>@localizer["Auteur:"]</strong> @Model.Author.FirstName @Model.Author.LastName</p>
+                        <p><strong>@localizer["Collection:"]</strong> @Model.Collection.Title</p>
+                        <p>
+                            <strong>@localizer["Thème:"]</strong>
+                            @foreach (AlFikr.FrontendUI.Entities.ThemeEntity theme in Model.Themes)
+                            {
+                                @theme.Title
+                            }
+                        </p>
+                        <p><strong>@localizer["Speciality: "]</strong> @Model.Thesis.Speciality </p>
+                        <p><strong>@localizer["Discipline: "]</strong> @Model.Thesis.Discipline </p>
+                        <p><strong>@localizer["Type: "]</strong> @Model.Thesis.Type </p>
+                        <p><strong>@localizer["Institution: "]</strong> @Model.Thesis.Institution </p>
+                        <p><strong>@localizer["Mots clés:"]</strong> @Model.Thesis.Keywords</p>
+                    }
+                    else
+                    {
+                        <h3>Thesis details not available.</h3>
+                    }
+                </div>
+            </div>
+            <div class="row ">
+                <div class="table-tabs w-100">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#sectionA">Aperçus</a></li>
+                        <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#sectionC">Préface</a></li>
+                        <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#sectionB">Résumé</a></li>
+                        <li class="nav-item"><a class="nav-link " data-toggle="tab" href="#sectionD">Commentaires</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="sectionA" class="tab-pane fade show active" style="padding-top:0%">
+                            <div class="text-right"><a style="cursor:pointer" onclick="AddDocumentFile()">@localizer["Nouvel aperçu"]</a></div>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["Titre"]</th>
+                                        <th>@localizer["Page début"]</th>
+                                        <th>@localizer["Page fin"]</th>
+                                        <th>@localizer["Etat"] </th>
+                                        <th class="text-center">@localizer["Actions"] </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chapter_data">
+                                    @if (Model.ListOfDocumentFiles != null)
+                                    {
+                                        foreach (var item in Model.ListOfDocumentFiles)
+                                        {
+                                            <tr>
+                                                <td>@item.Title</td>
+                                                <td>@item.StartPage</td>
+                                                <td>@item.EndPage</td>
+                                                <td>@item.State</td>
+                                                <td>Actions</td>
+                                                <td class="text-center">
+                                                    <div class="dropdown dropdown-action">
+                                                        <a href="#" class="" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i></a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" asp-page="/Authors/Upsert" asp-area="Admin" asp-route-id="@item.Id"><i class="bi bi-pencil-square mr-3"></i>Editer</a>
+                                                            <a class="dropdown-item" href="javascript:void(0)"><i class="bi bi-trash mr-3"></i>Supprimer</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="5" class="text-center">No Data Found</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            <!-- Modal AddFile -->
+                            <div class="modal fade" id="AddFile" style="padding-top:4%" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <strong><p class="modal-title" id="exampleModalLabel">@localizer["Nouvel aperçu"]</p></strong>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body">
+                                            <ul class="list-group">
+                                                <li class="list-group-item">
+                                                    <form id="myForm">
+                                                        <input type="hidden" id="idfile" name="Id" value="0" />
+                                                        <input type="hidden" id="reference" name="Reference" value="" />
+                                                        <input type="hidden" id="iddocument" name="IdDocument" value="@Model.Thesis?.Id" />
+                                                        <div class="form-group">
+                                                            <label for="">@localizer["Titre"]</label><font color="red"><strong>  *</strong></font>&nbsp;<span id="validate-title" class="text-danger" hidden="hidden"></span>
+                                                            <input id="title" name="Title" class="form-control" required />
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="">@localizer["Page Début"]</label><font color="red"><strong>  *</strong></font>&nbsp;<span id="validate-start-page" class="text-danger" hidden="hidden"></span>
+                                                                    <input id="startPage" name="StartPage" type="number" class="form-control" required />
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="">@localizer["Page Fin"]</label><font color="red"><strong>  *</strong></font>&nbsp;<span id="validate-end-page" class="text-danger" hidden="hidden"></span>
+                                                                    <input id="endPage" name="EndPage" type="number" class="form-control" required />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="">@localizer["Etat"]</label><font color="red"><strong>  *</strong></font>&nbsp;<span id="validate-state" class="text-danger" hidden="hidden"></span>
+                                                            <select id="state" name="State" class="form-control" style="display:block !important;" required>
+                                                                <option value="Ouvert">@localizer["Ouvert"]</option>
+                                                                <option value="Fermé">@localizer["Fermé"]</option>
+                                                            </select>
+                                                        </div>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                            <center>
+                                                <button class="btn btn-secondary" data-dismiss="modal">@localizer["Annuler"]</button>
+                                                <button class="btn btn-primary" onclick="btnAddFile()">@localizer["Enregistrer"]</button>
+                                            </center>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="sectionB" class="tab-pane fade ">
+                            @(Model.Thesis?.Abstract != null ? Model.Thesis.Abstract : "No Abstract Found")
+                        </div>
+                        <div id="sectionC" class="tab-pane fade ">
+                            @(Model.Thesis?.Foreword != null ? Model.Thesis.Foreword : "No Foreword Found")
+                        </div>
+                        <div id="sectionD" class="tab-pane fade ">
+                            @(Model.Thesis?.Notes != null ? Model.Thesis.Notes : "No Notes Found")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        @section Scripts {
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function AddDocumentFile() {
+        Swal.fire({
+            title: 'Ajouter des apercu',
+            html: document.getElementById('DocumentFileForm').outerHTML,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ajouter',
+            cancelButtonText: 'Annuler',
+            preConfirm: () => {
+                document.getElementById('DocumentFileForm').submit();
+            }
+        });
+    }
+</script>
+        }

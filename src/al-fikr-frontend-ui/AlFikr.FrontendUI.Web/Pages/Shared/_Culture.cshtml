@@ -1,0 +1,33 @@
+﻿@{
+    var culture = Context.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+    var culturelist = locOptions.Value.SupportedUICultures.Select(x => new SelectListItem { Value = x.Name, Text = localizer.GetString(x.Name) }).ToList();
+    var returnUrl = string.IsNullOrWhiteSpace(Context.Request.Path) ? "~/" : $"{Context.Request.Path.Value}{Context.Request.QueryString}";
+}
+
+<!-- Language -->
+<div>
+    <div class="language">
+        <form id="cultureform" asp-area="Ebook" asp-page="/Home/Index" asp-page-handler="CultureManagement" asp-route-returnUrl="@returnUrl" method="post">
+            <a class="nav-link dropdown-toggle" style="font-size:14px;" href="#" data-bs-toggle="dropdown"> <img id="current-culture" src="~/images/flag-@(culture.RequestCulture.UICulture.Name).png" alt="@culture.RequestCulture.UICulture.Name" />&nbsp; @culturelist.Find(x => x.Value == culture.RequestCulture.UICulture.Name).Text</a>
+            <div class="dropdown-menu">
+                <input id="culture" type="hidden" name="culture" value="" />
+                @foreach (var item in culturelist)
+                {
+                    if (item.Value != @culture.RequestCulture.UICulture.Name)
+                    {
+                        <a class="dropdown-item selectedarea" style="font-size:14px;" onclick="setLang('@item.Value')"><img src="~/images/flag-@(item.Value).png" alt="@item.Value" />&nbsp; @item.Text</a>
+                    }
+                }
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- End Language -->
+<script>
+    function setLang(x) {
+        $('.se-pre-con').show();
+        $('#culture').val(x);
+        $('#cultureform').submit();
+    }
+</script>

@@ -1,0 +1,45 @@
+﻿@using AlFikr.FrontendUI.Entities;
+
+<div class="modal fade" id="modalImportDocuments" aria-labelledby="formModal" aria-hidden="true" style="padding-top:4%">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom pb-3">
+                <h5 class="modal-title">@localizer["Importer des œuvres suivant nos modèles"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="FileContentForm">
+                    <fieldset class="scheduler-border">
+                        <div class="border mb-3" style="padding: 6px !important;">
+                            <div>
+                                <i class="fa fa-check info pr-2"></i>
+                                <span style="font-size:15px;">
+                                    @localizer["Les données à importer doivent être stockées dans un fichier Excel ayant la structure comme mentionner dans ces templates :"]
+                                    <a href="/Document/DataValidationExcelFile" class="alert-link">Documents.xlsm</a>
+                                    @localizer["ou bien"]
+                                    <a href="/Document/DataValidationCSVFile" class="alert-link"> Document.csv </a>
+                                    @localizer["pour les fichiers"] <b style="color:#ecb43a">xlsx</b> et <b style="color:#ecb43a">csv</b> @localizer["ou en format"] <b style="color:#ecb43a">.mrc</b> et <b style="color:#ecb43a">.xml</b> @localizer["pour les fichiers"] <b style="color:#ecb43a">Marc21</b>.
+                                </span>
+                            </div>
+                            <div>
+                                <i class="fa fa-check info pr-2"></i>
+                                <span style="font-size:15px;">
+                                    @localizer["Prière de respecter le nom et l’ordre des colonnes ainsi que la nature de l’information que doit stocker chaque champ."]
+                                </span>
+                            </div>
+                        </div>
+                        <span class="tooltip-info pull-right border p-2" data-toggle="tooltip" data-placement="bottom" title="Choisissez le fichier">
+                            <input name="FileContent" id="FileContent" accept=".mrc,.xml, .csv,.xlsm" type="file" />
+                            <a class="btn btn-primary" href="#" onclick="ImportData()">@localizer["Importer"]</a>
+                        </span>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:void(0)" data-dismiss="modal" class="btn btn-secondary" style="margin-right: 0%;">@localizer["Annuler"]</a>
+            </div>
+        </div>
+    </div>
+</div>

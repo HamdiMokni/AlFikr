@@ -1,0 +1,1 @@
+Scaffold-DbContext "server=localhost;port=3306;database=alfikr-service;uid=admin;password=M6ER9aSS" Pomelo.EntityFrameworkCore.MySql -o Models -context AlFikrContext -Project AlFikr.BookService.Data -force

@@ -1,0 +1,60 @@
+﻿@using AlFikr.FrontendUI.Entities
+@model AdvancedSearchEntity;
+
+<div class="modal fade" id="advancedSearchModal" tabindex="-1" aria-labelledby="formModal" aria-hidden="true" style="padding-top:10%">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row col-md-12">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title"><b>@localizer["Recherche Avancée"]</b></h3>
+                    </div>
+                </div>
+                <hr />
+                <form id="advancedSearchForm" method="post" asp-page-handler="AdvancedSearch" asp-area="Ebook" asp-page="/Home/Index">
+                    <div id="advancedSearchRows">
+                        <div class="row col-md-12 mb-2" id="advancedsearch">
+                            <div class="col-md-1" style="padding-top:1%;text-align:right;font-weight:bold">
+                                <label>@localizer["Dans"]</label>
+                            </div>
+                            <div class="col-md-3 text-left">
+                                <select class="form-control" asp-for="AdvancedSearchEntities[0].Field">
+                                    <option value="FullText" selected>@localizer["FullText"]</option>
+                                    <option value="ISBN">@localizer["ISBN"]</option>
+                                    <option value="DOI">@localizer["DOI"]</option>
+                                    <option value="Abstract">@localizer["Abstract"]</option>
+                                    <option value="Title">@localizer["Title"]</option>
+                                    <option value="Author">@localizer["Author"]</option>
+                                    <option value="Preface">@localizer["Preface"]</option>
+                                    <option value="Theme">@localizer["Theme"]</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5" id="text">
+                                <input asp-for="AdvancedSearchEntities[0].Expression" class="form-control" placeholder="@localizer["Expression"]" />
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-control" asp-for="AdvancedSearchEntities[0].Operator">
+                                    <option value="AND" selected>@localizer["Et"]</option>
+                                    <option value="OR">@localizer["Ou"]</option>
+                                    <option value="NEAR">@localizer["Près de"]</option>
+                                    <option value="BUT">@localizer["Sauf"]</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1 text-right actions" style="margin: auto;">
+                                <i class="fa fa-plus-circle" onclick="ManageRow(this)" style="cursor:pointer;font-size:30px;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12 justify-content-end" style="padding-top:2%">
+                        <button type="button" onclick="DeleteAllRows()" style="color: #fff;" class="btn btn-default m-1">@localizer["Effacer"]</button>
+                        <button type="submit" style="color: #fff;" class="btn btnAdvancedSearch m-1">@localizer["Chercher"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

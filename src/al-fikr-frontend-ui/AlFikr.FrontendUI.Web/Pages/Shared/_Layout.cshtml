@@ -1,0 +1,219 @@
+﻿@using AlFikr.FrontendUI.Entities
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AlFikr.FrontendUI.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/keyboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AlFikr.FrontendUI.Web.styles.css" asp-append-version="true" />
+    <link rel="icon" href="~/images/logo.png" />
+    <link rel='shortcut icon' type='image/x-icon' href='~/images/favicon.ico' />
+    <link href="~/css/keyboard.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/font-awesome.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css">
+    <link rel="stylesheet" href="~/lib/izitoast/css/iziToast.min.css">
+</head>
+<body>
+    <div class="se-pre-con"></div>
+    <div class="loading" id="loading" hidden="hidden"></div>
+    <div id="top-content">
+        <div class="header-container">
+            <header class="top-header">
+                <div class="top-menu">
+                    <div class="container">
+                        <div class="row justify-content-between has-border">
+                            <div class="col-2 col-md-2">
+                                <partial name="_Culture" />
+                            </div>
+                            <div class="col-2 col-md-2">
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="compte text-center">
+                                    <label style="cursor: pointer;font-size:13px" onclick="">@localizer["Vous accédez à al-fikr via"]</label>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-4">
+                                <div class="compte text-right" id="login">
+                                    <a onclick="Signup()" style=" cursor: pointer; font-size: 12px">@localizer["S’inscrire"]</a>
+                                    <span id="signupbarre"> | </span>
+                                    <label id="account"><a id="acc" onclick="Login()" style="cursor: pointer;font-size: 12px">@localizer["Se connecter"]</a></label>
+                                    <span id="myCart" class="p1 fa-stack fa-2x has-badge visible-lg" style="font-size:large;cursor:pointer" data-count="0">
+                                        <i class="fa fa-shopping-cart fa-stack-1x xfa-inverse visible-lg"></i>
+                                    </span>
+                                </div>
+                                <script>
+                                    /*
+                                    function login() {
+                                        var url = window.location.href;
+                                        window.location.href = "/account/login?returnUrl=" + url;
+                                    }*/
+                                    function Signup() {
+                                        var url = window.location.href;
+                                        window.location.href = `https://localhost:7262/Account/signup`;
+                                    }
+
+
+                                    function Login() {
+                                                const clientId = '@Environment.GetEnvironmentVariable("ClientId")';
+                                                const redirectUri ='@Environment.GetEnvironmentVariable("CallbackPath")'
+                                                const authorizationEndpoint = '@Environment.GetEnvironmentVariable("AuthorizationEndpoint")';
+                                                const responseType = 'code';
+
+                                                const url = `${authorizationEndpoint}?response_type=${responseType}&client_id=${clientId}&redirect_uri=${redirectUri}`;
+
+                                        /*
+                                        const scope = 'openid profile email'; // Adjust scopes as needed
+                                        const state = 'your_unique_state_value'; // Optional: A value to maintain state between the request and callback*/
+
+                                        window.location.href = url;
+                                    }
+                                </script>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+                <div class="main-menu">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                <div class="logo">
+                                    <a href="/"><img onclick="$('.se-pre-con').show();" src="~/images/logo.png" alt="al-fikr" /></a>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-9">
+                                <div class="search-bloc clearfix">
+                                    <form id="simplesearchForm" method="get" asp-page="/Home/Search" asp-area="Ebook" asp-route-searchTerm="">
+                                        <div class="row text-center">
+                                            <div class="col-md-8">
+                                                <div class="input-search">
+                                                    <input type="text" name="search" id="search" class="keyboardInput" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="input-submit">
+                                                    <button type="button" onclick="simplesearch()" class="send-form">@localizer["Recherche Rapide"]</button>
+                                                    <button type="button" id="advancedSearch" data-bs-toggle="modal" data-bs-target="#advancedSearchModal" class="search-filter selectedarea">@localizer["Recherche Avancée"]</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+    </div>
+    <div>
+        @RenderBody()
+        <partial name="_CookieConsentPartial" />
+    </div>
+    <!-- Button trigger modal -->
+
+    <partial name="~/Pages/Shared/Modals/_AdvancedSearchModalPartial.cshtml" model="new AdvancedSearchEntity()" />
+    <partial name="~/Pages/Shared/Modals/_AuthorInfoPartial.cshtml" />
+    <footer id="footer" class="text-center text-lg-start text-white"
+            style="background-color: #424c50 ;font-family:Alegreya Sans SC">
+        <section class="d-flex justify-content-between p-4"
+                 style="background-color: #ecb43a;">
+            <div class="mr-5">
+                <span>@localizer["Get connected with us on social networks:"]</span>
+            </div>
+            <div>
+                <a href="https://www.facebook.com/Justech.tn" target="_blank" class="text-white mr-4">
+                    <i class="fa fa-facebook-f"></i>
+                </a>
+                <a href="https://www.youtube.com/channel/UC1tUKpSctGe6edvVo4Y5GRw" target="_blank" class="text-white mr-4">
+                    <i class="fa fa-youtube"></i>
+                </a>
+                <a href="https://www.linkedin.com/company/justech-tn/mycompany/" target="_blank" class="text-white mr-4">
+                    <i class="fa fa-linkedin"></i>
+                </a>
+            </div>
+        </section>
+        <section>
+            <div class="container-fluid text-center text-md-start mt-5">
+                <div class="row mt-3">
+                    <div class="col-md-1 col-xl-1 col-sm-0 ">
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-lg-2 col-xl-2 mx-auto mb-4">
+                        <img src="~/images/logo-justpublish.png" style=" height:50px;width:250px">
+                        <div>
+                            <span class="row" style="flex-wrap:nowrap;">
+                                <p class="col-7 my-auto mx-0 p-0">@localizer["Avec le soutien de"]</p>
+                                <a class="col" href="http://www.cpu.rnu.tn/" target="_blank"><img src="/images/cpu_logo.png" style="width:90px;/* height:50px; */" alt=""></a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-4 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold text-left" style="border-bottom: solid 2px #ecb43a;">@localizer["Our Content"] </h6>
+                        <div class="text-left">
+                            <p class="m-0">
+                                <a asp-action="OurProduct" asp-controller="Home" class="text-white" data-toggle="tooltip" data-placement="left" title="Tooltip on left"> @localizer["Al-fikr"]  </a>
+                            </p>
+                            <p class="m-0">
+                                <a asp-action="OurProduct" asp-controller="Home" class="text-white"> @localizer["Al-fikrPublish"]  </a>
+                            </p>
+                            <p class="m-0">
+                                <a asp-action="OurProduct" asp-controller="Home" class="text-white"> @localizer["Al-fikrSoft"] </a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-lg-2 col-sm-4 col-xl-2 mx-auto mb-4">
+                        <h6 class="text-uppercase fw-bold text-left" style="border-bottom: solid 2px #ecb43a;">@localizer["HELP & CONTACTS"]</h6>
+                        <div class="text-left">
+                            <p class="m-0">
+                                <a asp-action="conditions" asp-controller="Home" class="text-white">@localizer["Terms of Services"]</a>
+                            </p>
+                            <p class="m-0">
+                                <a asp-action="PrivacyTerms" asp-controller="Home" class="text-white">@localizer["Privacy statement"]</a>
+                            </p>
+                            <p class="m-0">
+                                <a asp-action="Contact" asp-controller="Home" class="text-white">@localizer["Contact us"]</a>
+                            </p>
+                            <p class="m-0">
+                                <a href="#!" class="text-white">@localizer["Help"]</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-lg-2 col-sm-4 col-xl-2 mx-auto mb-md-0 mb-4">
+                        <h6 class="text-uppercase fw-bold text-left" style="border-bottom: solid 2px #ecb43a;">@localizer["CONTACT"]</h6>
+                        <div class="text-left">
+                            <p class="m-0"><i class="fa fa-home mr-3" style="color:#ecb43a"></i> @localizer["Avenue Ali Bourguiba, résidence l'excellence, 5000 Monastir"]  </p>
+                            <p class="m-0"><i class="fa fa-envelope mr-3" style="color:#ecb43a"></i> info@al-fikr.com</p>
+                            <p class="m-0"><i class="fa fa-phone mr-3" style="color:#ecb43a"></i> +216 52 528 300</p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-xl-2 col-sm-4 ">
+                        <div class="text-center mx-auto my-auto">
+                            <img src="~/images/logo-startup-act.png" style="width:80px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="text-center p-3 text-right"
+             style="background-color: #3c3d3d;color:#ecb43a">
+            © @DateTime.Now.Year @localizer["copyright"]
+            <a style="color:#ecb43a" href="https://justech.tn/">Justech.tn</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.5/js/dataTables.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/keyboard.js"></script>
+    <script src="~/js/_AdvancedSearchModalPartial.js" asp-append-version="true"></script>
+    <script src="~/js/isotope.min.js"></script>
+    <script src="~/lib/izitoast/js/iziToast.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Abonnements" xml:space="preserve">
+    <value>الإشتراكات</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>إعدادات</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>إعدادات</value>
+  </data>
+  <data name="Adresse" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="Afficher par" xml:space="preserve">
+    <value>عرض ب</value>
+  </data>
+  <data name="Ajouter" xml:space="preserve">
+    <value>لإضافة</value>
+  </data>
+  <data name="Ajouter comme une nouvelle collection" xml:space="preserve">
+    <value>أضف كمجموعة جديدة</value>
+  </data>
+  <data name="Ajouter un utilisateur à votre établissement" xml:space="preserve">
+    <value>أضف مستخدمًا إلى مؤسستك</value>
+  </data>
+  <data name="Ajouter une collection" xml:space="preserve">
+    <value>إظافة مجموعة</value>
+  </data>
+  <data name="Annuler" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Année" xml:space="preserve">
+    <value>السنة</value>
+  </data>
+  <data name="Associate" xml:space="preserve">
+    <value>مساعد</value>
+  </data>
+  <data name="Auteur" xml:space="preserve">
+    <value>كاتب</value>
+  </data>
+  <data name="Auteurs" xml:space="preserve">
+    <value>المؤلفون</value>
+  </data>
+  <data name="Bar" xml:space="preserve">
+    <value>شريط</value>
+  </data>
+  <data name="Catalogues" xml:space="preserve">
+    <value>الفهرس</value>
+  </data>
+  <data name="Choix des produits" xml:space="preserve">
+    <value>اختيار المنتجات</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>مدينة</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>الرمز</value>
+  </data>
+  <data name="Collection" xml:space="preserve">
+    <value>مجموعة </value>
+  </data>
+  <data name="Collection :" xml:space="preserve">
+    <value>مجموعة :</value>
+  </data>
+  <data name="Collections" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="Collections assorties" xml:space="preserve">
+    <value>مجموعات مطابقة</value>
+  </data>
+  <data name="Commandes" xml:space="preserve">
+    <value>الطلبيات</value>
+  </data>
+  <data name="Commercial" xml:space="preserve">
+    <value>تجاري</value>
+  </data>
+  <data name="Confimer la sélection" xml:space="preserve">
+    <value>تأكيد الاختيار</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>دولة</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Date de création :" xml:space="preserve">
+    <value>تاريخ الإنشاء :</value>
+  </data>
+  <data name="Date de debut" xml:space="preserve">
+    <value>تاريخ البداية</value>
+  </data>
+  <data name="Date de fin" xml:space="preserve">
+    <value>تاريخ النهاية</value>
+  </data>
+  <data name="Date de publication" xml:space="preserve">
+    <value>تاريخ النشر</value>
+  </data>
+  <data name="Date début :" xml:space="preserve">
+    <value>تاريخ البداية :</value>
+  </data>
+  <data name="Date fin:" xml:space="preserve">
+    <value>تاريخ الانتهاء:</value>
+  </data>
+  <data name="Document" xml:space="preserve">
+    <value>وثيقة</value>
+  </data>
+  <data name="Doi" xml:space="preserve">
+    <value>رقم ديوي</value>
+  </data>
+  <data name="Détails de l'abonnement" xml:space="preserve">
+    <value>تفاصيل الاشتراك</value>
+  </data>
+  <data name="Editeur" xml:space="preserve">
+    <value>الناشر</value>
+  </data>
+  <data name="Editeur :" xml:space="preserve">
+    <value>الناشر:</value>
+  </data>
+  <data name="Editeurs" xml:space="preserve">
+    <value>الناشرين</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Enregistrer" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="Enregistrer l'utilisateur" xml:space="preserve">
+    <value>تسجيل المستخدم</value>
+  </data>
+  <data name="Enregistrer la correspondance" xml:space="preserve">
+    <value>تسجيل المقترح</value>
+  </data>
+  <data name="Enseignant" xml:space="preserve">
+    <value>معلم</value>
+  </data>
+  <data name="Etat :" xml:space="preserve">
+    <value>حالة :</value>
+  </data>
+  <data name="Etudiant" xml:space="preserve">
+    <value>طالب علم</value>
+  </data>
+  <data name="Faire la correspondance :" xml:space="preserve">
+    <value>إختيار المقترح :</value>
+  </data>
+  <data name="Faire la correspondance parmi les collections présent dans le systéme :" xml:space="preserve">
+    <value>تسجيل المقترح من بين المجموعات المتواجدة في النظام :</value>
+  </data>
+  <data name="Fermer" xml:space="preserve">
+    <value>غلق</value>
+  </data>
+  <data name="Individuels" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Information sur le produit :" xml:space="preserve">
+    <value>معلومات المنتج:</value>
+  </data>
+  <data name="Insérer l'ouvrage dans votre collection par défaut" xml:space="preserve">
+    <value>تسجيل المنشور داخل مجموعتك الرئيسية</value>
+  </data>
+  <data name="Intitulé Arabe" xml:space="preserve">
+    <value>المسمى باللغة العربية</value>
+  </data>
+  <data name="IP Adress" xml:space="preserve">
+    <value>معرف الإنترنات IP</value>
+  </data>
+  <data name="ISBN" xml:space="preserve">
+    <value>رقم ISBN</value>
+  </data>
+  <data name="J'atteste que la version PDF chargée est identique à la version imprimée de l'ouvrage." xml:space="preserve">
+    <value>أقر بأن نسخة PDF التي تم تحميلها مطابقة للنسخة المطبوعة من الكتاب.</value>
+  </data>
+  <data name="Jours" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="L'intervalle est trop long!" xml:space="preserve">
+    <value>الفترة كبيرة جدا</value>
+  </data>
+  <data name="Langue" xml:space="preserve">
+    <value>لغة</value>
+  </data>
+  <data name="Line" xml:space="preserve">
+    <value>خط</value>
+  </data>
+  <data name="List des Auteurs" xml:space="preserve">
+    <value>مجموعة المؤلفين</value>
+  </data>
+  <data name="List des collections" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="Liste des &amp;Eacute;valuateurs" xml:space="preserve">
+    <value>مجموعة المصححين</value>
+  </data>
+  <data name="Liste des produits" xml:space="preserve">
+    <value>قائمة المنتجات</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>الرسائل</value>
+  </data>
+  <data name="Mois" xml:space="preserve">
+    <value>الشهر</value>
+  </data>
+  <data name="Montant TTC :" xml:space="preserve">
+    <value>المبلغ شاملاً ضريبة القيمة المضافة:</value>
+  </data>
+  <data name="Nom" xml:space="preserve">
+    <value>اللقب</value>
+  </data>
+  <data name="Organisations" xml:space="preserve">
+    <value>المؤسسات</value>
+  </data>
+  <data name="Ou" xml:space="preserve">
+    <value>أين</value>
+  </data>
+  <data name="Ouvrages" xml:space="preserve">
+    <value>يعمل</value>
+  </data>
+  <data name="Page de Couverture" xml:space="preserve">
+    <value>صفحة المقدمة</value>
+  </data>
+  <data name="Partenaires" xml:space="preserve">
+    <value>شركاء</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>هاتف</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="PostalCode" xml:space="preserve">
+    <value>رمز بريدي</value>
+  </data>
+  <data name="Prix unitaire" xml:space="preserve">
+    <value>سعر الوحدة</value>
+  </data>
+  <data name="Profil" xml:space="preserve">
+    <value>حسابي</value>
+  </data>
+  <data name="Prénom" xml:space="preserve">
+    <value>الإسم</value>
+  </data>
+  <data name="Publications" xml:space="preserve">
+    <value>المنشورات</value>
+  </data>
+  <data name="Revues" xml:space="preserve">
+    <value>المجلات</value>
+  </data>
+  <data name="Role dans l'affiliation :" xml:space="preserve">
+    <value>الدور في العضوية:</value>
+  </data>
+  <data name="Référence :" xml:space="preserve">
+    <value>المرجعي :</value>
+  </data>
+  <data name="Se déconnecter" xml:space="preserve">
+    <value>تسجيل خروج</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>يختار</value>
+  </data>
+  <data name="Statistiques" xml:space="preserve">
+    <value>الإحصائيات</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>سمة</value>
+  </data>
+  <data name="Themes" xml:space="preserve">
+    <value>السمة</value>
+  </data>
+  <data name="Theses" xml:space="preserve">
+    <value>الأطروحات</value>
+  </data>
+  <data name="Thesis" xml:space="preserve">
+    <value>أطروحة</value>
+  </data>
+  <data name="Titre" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="Tous droits réservés" xml:space="preserve">
+    <value>جميع الحقوق محفوظة </value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Type :" xml:space="preserve">
+    <value>طراز</value>
+  </data>
+  <data name="Type du contenu :" xml:space="preserve">
+    <value>نوع المحتوى:</value>
+  </data>
+  <data name="Utilisateur :" xml:space="preserve">
+    <value>المستعمل :</value>
+  </data>
+  <data name="Utilisateurs" xml:space="preserve">
+    <value>المستخدمون</value>
+  </data>
+  <data name="Utilisateurs associés" xml:space="preserve">
+    <value>المستخدمون المرتبطون</value>
+  </data>
+  <data name="Voire détailles" xml:space="preserve">
+    <value>عرض المعطيات</value>
+  </data>
+  <data name="Vous ne pouvez pas présenter toutes les données de cet intervalle dans un graphe." xml:space="preserve">
+    <value>غير ممكن عرض كامل المعطيات في رسم بياني</value>
+  </data>
+  <data name="Vue / Accès refusé" xml:space="preserve">
+    <value>فتح \فتح مرفوض</value>
+  </data>
+</root>

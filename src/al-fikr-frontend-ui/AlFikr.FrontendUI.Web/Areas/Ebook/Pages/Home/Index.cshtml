@@ -1,0 +1,121 @@
+﻿@page "/"
+@using AlFikr.FrontendUI.Entities
+@model AlFikr.FrontendUI.Web.Areas.Ebook.Pages.Home.IndexModel
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/css/owl/owl.carousel.min.css" />
+<link rel="stylesheet" href="~/css/owl/owl.theme.default.css" />
+
+<div class="content-tabs" style="margin-top:30px;margin-bottom:10px;">
+    <div class="container">
+        <div class="extra-row">
+            <nav>
+                <div class="nav nav-tabs flex-column flex-sm-row" id="nav-tab" role="tablist">
+                    <a class="flex-sm-fill nav-item nav-link active" id="nav-ebooks-tab" data-bs-toggle="tab" data-bs-target="#nav-ouvrages" role="tab" aria-controls="nav-ouvrages" aria-selected="true">@localizer["ouvrages"]</a>
+                    <a class="flex-sm-fill nav-item nav-link" id="nav-ejournals-tab" data-bs-toggle="tab" data-bs-target="#nav-revues" role="tab" aria-controls="nav-revues" aria-selected="false">@localizer["revues"]</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent" style="padding:1%">
+                <div class="tab-pane fade show active" id="nav-ouvrages" role="tabpanel" aria-labelledby="nav-ebooks-tab">
+                    <div class="container mt-2">
+                        <div class="row col-md-12">
+                            @if (Model.Themes != null)
+                            {
+                                @foreach (var theme in Model.Themes)
+                                {
+                                    <div class="col-md-3 p-2">
+                                        <div onclick="alert('NOT READY!')" class="card theme-card border p-1 text-center" style="cursor:pointer">
+                                            <h6 style="font-family: 'Cairo', sans-serif;font-size:16px;" class="pt-2">
+                                                @localizer[theme.Title.Trim()]
+                                            </h6>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-revues" role="tabpanel" aria-labelledby="nav-ejournals-tab">
+                    <div class="container mt-2">
+                        <div class="row col-md-12">
+                            @if (Model.Themes != null)
+                            {
+                                @foreach (var theme in Model.Themes)
+                                {
+                                    <div class="col-md-3 p-2">
+                                        <div onclick="alert('NOT READY!')" class="card theme-card border p-1 text-center" style="cursor:pointer">
+                                            <h6 style="font-family: 'Cairo', sans-serif;font-size:16px;" class="pt-2">
+                                                @localizer[theme.Title.Trim()]
+                                            </h6>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Books Carousel -->
+    <div class="content-books mb-5">
+
+    <div class="container">
+        <div class="row">
+            <!-- Books title -->
+            <div class="col-12 text-center">
+                <h2 class="title-divider" style="margin:2%"><span>@localizer["Livres Récemment Ajoutés"]</span></h2>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-slider">
+            <div class="owl-carousel owl-theme">
+                @if (Model.RecentEbooks != null){
+                    @foreach (var p in Model.RecentEbooks)
+                    {
+                       <div class="item">
+                           <div class="book-wrapper">
+                                <div class="book-bg">
+                                    <a href="/home/book?id=@p.Id" target="_blank"> <img src="~/images/ebooks/1.jpg" alt="@p.Id" style="width:180px;" /> </a>
+                                </div>
+                            </div> 
+                            <div class="book-title">
+                                <div>
+                                    <h5 class="text-center" onclick="addCart('@p.Id')" id="lbl-addtocart" style="cursor:pointer;"><strong>@localizer["Ajouter au panier"]</strong></h5>
+                                </div>
+                                <h4><a href="/home/book?id=@p.Id" target="_blank">@p.OriginalTitle</a></h4>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/owl/owl.carousel.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var owl = $('.owl-carousel');
+            owl.owlCarousel({
+                items: 5,
+                loop: true,
+                navigator: true,
+                margin: 10,
+                autoplay: true,
+                autoplayTimeout: 2000,
+                autoplayHoverPause: true
+            });
+        });
+    </script>
+}
+
+
+

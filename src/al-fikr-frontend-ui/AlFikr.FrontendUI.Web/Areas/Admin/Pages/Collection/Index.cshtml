@@ -1,0 +1,54 @@
+﻿@page
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Collection.IndexModel
+@{
+}
+
+<div class="row" style="padding-bottom:1%">
+    <div class="col-md-10">
+        <h2 style="color:#6777ef">@localizer["Liste des collection"] (@Model.Collections.Count)</h2>
+    </div>
+    <div class="col-md-2 text-right">
+        <a asp-page="/Collection/Upsert" asp-area="Admin" class="btn btn-primary form-control text-white">
+            @localizer["Ajouter Collection"]
+        </a>
+    </div>
+</div>
+
+<table id="collectionsTable" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>@localizer["Titre"]</th>
+            <th>@localizer["Intitulé Arabe"]</th>
+            <th class="text-left">@localizer["Description"]</th>
+            <th class="text-center">@localizer["Actions"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Collections != null)
+        {
+            foreach (var item in Model.Collections)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td class="text-start">@item.ArTitle</td>
+                    <td>@item?.Description</td>
+                    <td class="text-center">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" asp-page="/Collection/Upsert" asp-area="Admin" asp-route-id="@item.Id"><i class="bi bi-pencil-square mr-3"></i>@localizer["Editer"]</a>
+                                <form id="deleteCollection" method="post" asp-page-handler="Delete" asp-route-id="@item.Id" method="post">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteCollection()"><i class="bi bi-trash mr-3"></i>@localizer["Supprimer"]</a>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/collection.js"></script>
+}

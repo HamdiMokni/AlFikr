@@ -1,0 +1,484 @@
+﻿@page "{id:int?}"
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Document.UpsertModel
+@{
+}
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+            <form id="myForm" method="post" enctype="multipart/form-data">
+                <div class="text-danger text-right" asp-validation-summary="ModelOnly"></div>
+                <div class="card-header">
+                    @*  <h4>@(Ebook.Id == 0 ? "Ajouter" : "Editer") livre</h4> *@
+                </div>
+
+
+                <input type="hidden" asp-for="Ebook.Id" />
+
+
+                <input type="hidden" asp-for="Ebook.DocumentType" value="EBook" />
+                @*  <input type="hidden" id="attachmentFileDocumentName" asp-for="Ebook.attachmentFileDocumentName" value="" />
+                <input type="hidden" id="attachmentCoverPageName" asp-for="Ebook.attachmentCoverPageName" value="" /> *@
+
+                <div class="text-danger text-right" asp-validation-summary="ModelOnly"></div>
+                <div class="card-body">
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Titre</label>&nbsp;<span style="color:red;">*</span>
+                                <input id="OriginalTitle" required asp-for="Ebook.OriginalTitle" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Autres Titres</label>
+                                <input asp-for="Ebook.TitlesVariants" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>ISBN</label>&nbsp;<span style="color:red;">*</span>
+                                <input id="ISBN" required pattern="[0-9]{3}-[0-9]{4}-[0-9]{2}-[0-9]{3}-[0-9]" min="17" max="17" title="XXX-XXXX-XX-XXX-X" asp-for="Ebook.ISBN" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Date de publication</label>&nbsp;<span style="color:red;">*</span>
+                                <input list="years" id="publicationDate" required pattern="[0-9]{4}" title="XXXX" asp-for="Ebook.PublicationDate" class="form-control">
+                                <datalist id="years">
+                                    @* @foreach (string s in ViewBag.Years)
+                                    {
+                                    <option value="@s">@s</option>
+                                    } *@
+                                </datalist>
+                            </div>
+                        </div>
+                       
+                    </div>
+                  
+                    <div class="row col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Numéro d'édition</label>&nbsp;<span style="color:red;"><label class="start">*</label></span>
+
+                                <input asp-for="Ebook.EditionNum" class="form-control">
+
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Nombre des pages</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Ebook.NbPages" required type="number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Langue</label>&nbsp;<span style="color:red;">*</span>
+                                <select id="OriginalLanguage" required asp-for="Ebook.OriginalLanguage" class="form-control">
+                                    <option value="Français">Français</option>
+                                    <option value="Anglais">Anglais</option>
+                                    <option value="Arabe">Arabe</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Autres Langue</label>
+                                <input asp-for="Ebook.LanguagesVariants" class="form-control">
+                            </div>
+                        </div>
+                       @*  <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Auteurs principaux</label>&nbsp;<span style="color:red;">*</span><a href="#newauthor" data-toggle="modal" class="pull-right" style="text-decoration:underline">Ajouter</a>
+                                <select class="form-control" id="authors" required name="authors" style="width:100%">
+                                    @foreach (var author in Model.ListOfAuthors)
+                                    {
+                                        <option value=@author.Id>@author.FirstName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div> *@
+                       @*  <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Collaborateurs</label>
+                                <select class="form-control" id="collaborateurs" name="collaborateurs" style="width:100%">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>&Eacute;valuateurs</label><a href="#newreviewer" data-toggle="modal" class="pull-right" style="text-decoration:underline">Ajouter</a>
+                                <select class="form-control" id="evaluateurs" name="evaluateurs" style="width:100%">
+                                </select>
+                            </div>
+                        </div> *@
+                    </div>
+                    <div class="row col-md-12">
+                       @*  <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Thème</label>&nbsp;<span style="color:red;">*</span>
+                                <select class="form-control" id="themes" required name="themes" style="width:100%">
+                                    @foreach (var theme in Model.ListOfThemes)
+                                    {
+                                        <option value=@theme.Id>@theme.Title </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Catalogue</label>&nbsp;<span style="color:red;">*</span>
+                                <select class="form-control" id="catalogues" required name="catalogues" style="width:100%">
+                                    @foreach (var catalogue in Model.ListOfCatalogues)
+                                    {
+                                        <option value=@catalogue.Id>@catalogue.Title </option>
+                                    }
+                                </select>
+                            </div>
+                        </div> *@
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Pays</label>
+                                <select class="form-control" asp-for="Ebook.Country">
+                                    <option value="AF">Afghanistan </option>
+                                    <option value="CF">Afrique_Centrale </option>
+                                    <option value="ZA">Afrique_du_Sud </option>
+                                    <option value="AL">Albanie </option>
+                                    <option value="DZ">Algerie </option>
+                                    <option value="DEU">Allemagne </option>
+                                    <option value="AD">Andorre </option>
+                                    <option value="AO">Angola </option>
+                                    <option value="AI">Anguilla </option>
+                                    <option value="SA">Arabie_Saoudite </option>
+                                    <option value="AR">Argentine </option>
+                                    <option value="AM">Armenie </option>
+                                    <option value="AU">Australie </option>
+                                    <option value="AT">Autriche </option>
+                                    <option value="AZ">Azerbaidjan </option>
+
+                                    <option value="BS">Bahamas </option>
+                                    <option value="BD">Bangladesh </option>
+                                    <option value="BB">Barbade </option>
+                                    <option value="BH">Bahrein </option>
+                                    <option value="BE">Belgique </option>
+                                    <option value="BZ">Belize </option>
+                                    <option value="BJ">Benin </option>
+                                    <option value="BM">Bermudes </option>
+                                    <option value="BY">Bielorussie </option>
+                                    <option value="BO">Bolivie </option>
+                                    <option value="BW">Botswana </option>
+                                    <option value="BT">Bhoutan </option>
+                                    <option value="BA">Boznie_Herzegovine </option>
+                                    <option value="BR">Bresil </option>
+                                    <option value="BN">Brunei </option>
+                                    <option value="BG">Bulgarie </option>
+                                    <option value="BF">Burkina_Faso </option>
+                                    <option value="BI">Burundi </option>
+
+                                    <option value="KH">Cambodge </option>
+                                    <option value="CM">Cameroun </option>
+                                    <option value="CA">Canada </option>
+                                    <option value="CV">Cap_Vert </option>
+                                    <option value="CL">Chili </option>
+                                    <option value="CN">Chine </option>
+                                    <option value="CY">Chypre </option>
+                                    <option value="CO">Colombie </option>
+                                    <option value="KM">Comoros </option>
+                                    <option value="CG">Congo </option>
+                                    <option value="CD">Congo_democratique </option>
+                                    <option value="CK">Cook </option>
+                                    <option value="PRK">Coree_du_Nord </option>
+                                    <option value="KOR">Coree_du_Sud </option>
+                                    <option value="CR">Costa_Rica </option>
+                                    <option value="CI">Côte_d_Ivoire </option>
+                                    <option value="HR">Croatie </option>
+                                    <option value="CU">Cuba </option>
+
+                                    <option value="DK">Danemark </option>
+                                    <option value="DJ">Djibouti </option>
+                                    <option value="DM">Dominique </option>
+
+                                    <option value="EG">Egypte </option>
+                                    <option value="ARE">Emirats_Arabes_Unis </option>
+                                    <option value="ECU">ECUADOR </option>
+                                    <option value="ER">Erythree </option>
+                                    <option value="ES">Espagne </option>
+                                    <option value="EE">Estonie </option>
+                                    <option value="US">Etats_Unis </option>
+                                    <option value="ET">Ethiopie </option>
+
+                                    <option value="FK">Falkland </option>
+                                    <option value="FO">Feroe </option>
+                                    <option value="FJ">Fidji </option>
+                                    <option value="FI">Finlande </option>
+                                    <option value="FR">France </option>
+
+                                    <option value="GA">Gabon </option>
+                                    <option value="GM">Gambie </option>
+                                    <option value="GE">Georgie </option>
+                                    <option value="GH">Ghana </option>
+                                    <option value="GI">Gibraltar </option>
+                                    <option value="GR">Grece </option>
+                                    <option value="GD">Grenade </option>
+                                    <option value="GL">Greenland </option>
+                                    <option value="GP">Guadeloupe </option>
+                                    <option value="GU">Guam </option>
+                                    <option value="GT">Guatemala</option>
+                                    <option value="GG">Guernesey </option>
+                                    <option value="GN">Guinea </option>
+                                    <option value="GW">Guinea_Bissau </option>
+                                    <option value="GQ">Guinea_Equatoriale </option>
+                                    <option value="GY">Guyana </option>
+                                    <option value="GF">Guyane_Francaise </option>
+
+                                    <option value="HT">Haiti </option>
+                                    <option value="US-HI">Hawaii </option>
+                                    <option value="HN">Honduras </option>
+                                    <option value="HK">Hong_Kong </option>
+                                    <option value="HU">Hongrie </option>
+
+                                    <option value="IN">Inde </option>
+                                    <option value="ID">Indonesie </option>
+                                    <option value="IR">Iran </option>
+                                    <option value="IQ">Iraq </option>
+                                    <option value="IE">Irlande </option>
+                                    <option value="IS">Islande </option>
+                                    <option value="IL">Israel </option>
+                                    <option value="IT">italie </option>
+
+                                    <option value="JM">Jamaique </option>
+                                    <option value="JP">Japon </option>
+                                    <option value="JE">Jersey </option>
+                                    <option value="JO">Jordanie </option>
+
+                                    <option value="KZ">Kazakhstan </option>
+                                    <option value="KE">Kenya </option>
+                                    <option value="KG">Kirghizistan </option>
+                                    <option value="KI">Kiribati </option>
+                                    <option value="KW">Koweit </option>
+
+                                    <option value="LA">Laos </option>
+                                    <option value="LS">Lesotho </option>
+                                    <option value="LV">Lettonie </option>
+                                    <option value="LY">Liban </option>
+                                    <option value="LR">Liberia </option>
+                                    <option value="LI">Liechtenstein </option>
+                                    <option value="LT">Lituanie </option>
+                                    <option value="LU">Luxembourg </option>
+
+                                    <option value="MO">Macao </option>
+                                    <option value="MK">Macedoine </option>
+                                    <option value="MG">Madagascar </option>
+                                    <option value="MY">Malaisie </option>
+                                    <option value="MW">Malawi </option>
+                                    <option value="MV">Maldives </option>
+                                    <option value="ML">Mali </option>
+                                    <option value="MT">Malte </option>
+                                    <option value="MP">Mariannes du Nord </option>
+                                    <option value="MA">Maroc </option>
+                                    <option value="MH">Marshall </option>
+                                    <option value="MQ">Martinique </option>
+                                    <option value="MU">Maurice </option>
+                                    <option value="MR">Mauritanie </option>
+                                    <option value="YT">Mayotte </option>
+                                    <option value="MX">Mexique </option>
+                                    <option value="FM">Micronesie </option>
+                                    <option value="UM">Midway </option>
+                                    <option value="MD">Moldavie </option>
+                                    <option value="MC">Monaco </option>
+                                    <option value="MN">Mongolie </option>
+                                    <option value="MS">Montserrat </option>
+                                    <option value="MZ">Mozambique </option>
+
+                                    <option value="NA">Namibie </option>
+                                    <option value="NR">Nauru </option>
+                                    <option value="NP">Nepal </option>
+                                    <option value="NI">Nicaragua </option>
+                                    <option value="NE">Niger </option>
+                                    <option value="NG">Nigeria </option>
+                                    <option value="NU">Niue </option>
+                                    <option value="NF">Norfolk </option>
+                                    <option value="NO">Norvege </option>
+                                    <option value="NC">Nouvelle_Caledonie </option>
+                                    <option value="NZ">Nouvelle_Zelande </option>
+
+                                    <option value="OM">Oman </option>
+                                    <option value="UG">Ouganda </option>
+                                    <option value="UZ">Ouzbekistan </option>
+
+                                    <option value="PK">Pakistan </option>
+                                    <option value="PW">Palau </option>
+                                    <option value="PS">Palestine </option>
+                                    <option value="PA">Panama </option>
+                                    <option value="PG">Papouasie_Nouvelle_Guinee </option>
+                                    <option value="PY">Paraguay </option>
+                                    <option value="NL">Pays_Bas </option>
+                                    <option value="PE">Perou </option>
+                                    <option value="PH">Philippines </option>
+                                    <option value="PL">Pologne </option>
+                                    <option value="PF">Polynesie </option>
+                                    <option value="PR">Porto_Rico </option>
+                                    <option value="PT">Portugal </option>
+
+                                    <option value="QA">Qatar </option>
+
+                                    <option value="DO">Republique_Dominicaine </option>
+                                    <option value="CZ">Republique_Tcheque </option>
+                                    <option value="RE">Reunion </option>
+                                    <option value="RO">Roumanie </option>
+                                    <option value="GB">Royaume_Uni </option>
+                                    <option value="RU">Russie </option>
+                                    <option value="RW">Rwanda </option>
+
+                                    <option value="EH">Sahara Occidental </option>
+                                    <option value="LC">Sainte_Lucie </option>
+                                    <option value="SM">Saint_Marin </option>
+                                    <option value="SB">Salomon </option>
+                                    <option value="SV">Salvador </option>
+                                    <option value="WS">Samoa_Occidentales</option>
+                                    <option value="AS">Samoa_Americaine </option>
+                                    <option value="ST">Sao_Tome_et_Principe </option>
+                                    <option value="SN">Senegal </option>
+                                    <option value="SC">Seychelles </option>
+                                    <option value="SL">Sierra Leone </option>
+                                    <option value="SG">Singapour </option>
+                                    <option value="SK">Slovaquie </option>
+                                    <option value="SI">Slovenie</option>
+                                    <option value="SO">Somalie </option>
+                                    <option value="SD">Soudan </option>
+                                    <option value="LK">Sri_Lanka </option>
+                                    <option value="SE">Suede </option>
+                                    <option value="CH">Suisse </option>
+                                    <option value="SR">Surinam </option>
+                                    <option value="SZ">Swaziland </option>
+                                    <option value="SY">Syrie </option>
+
+                                    <option value="TJ">Tadjikistan </option>
+                                    <option value="TW">Taiwan </option>
+                                    <option value="TO">Tonga </option>
+                                    <option value="TZ">Tanzanie </option>
+                                    <option value="TD">Tchad </option>
+                                    <option value="TH">Thailande </option>
+                                    <option value="TL">Timor_Oriental </option>
+                                    <option value="TG">Togo </option>
+                                    <option value="TT">Trinite_et_Tobago </option>
+                                    <option value="SH">Tristan de cuncha </option>
+                                    <option value="TN">Tunisie </option>
+                                    <option value="TM">Turmenistan </option>
+                                    <option value="TR">Turquie </option>
+
+                                    <option value="UA">Ukraine </option>
+                                    <option value="UY">Uruguay </option>
+
+                                    <option value="VU">Vanuatu </option>
+                                    <option value="VE">Venezuela </option>
+                                    <option value="VI">Vierges_Americaines </option>
+                                    <option value="VG">Vierges_Britanniques </option>
+                                    <option value="VN">Vietnam </option>
+
+                                    <option value="UM">Wake </option>
+                                    <option value="WF">Wallis et Futuma </option>
+
+                                    <option value="YE">Yemen </option>
+                                    <option value="MK">Yougoslavie </option>
+
+                                    <option value="ZM">Zambie </option>
+                                    <option value="ZW">Zimbabwe </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Prix ( version papier )</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Ebook.Price" required class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Nature de livre</label>
+                                <select asp-for="Ebook.Genre" class="form-control">
+                                    <option value="" hidden disabled selected>-- Select --</option>
+                                    <option value="Manuel pédagogique">Manuel pédagogique</option>
+                                    <option value="Ouvrage">Ouvrage</option>
+                                    <option value="Actes de colloque">Actes de colloque</option>
+                                    <option value="Autres">Autres</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Traduit</label><br />
+                                <select class="form-control" id="traduit">
+                                    <option value="" hidden disabled selected>--Select --</option>
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non">Non</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group mb-0">
+                                <label>Mots clés</label>&nbsp;<span style="color:red;">*</span>
+                                <textarea class="no-resize" required style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Ebook.Keywords"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-0">
+                                <label>Commentaires</label>
+                                <textarea class="no-resize" style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Ebook.Notes"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-0">
+                                <label>Préface</label>&nbsp;<span style="color:red;">*</span>
+                                <textarea class="no-resize" required style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Ebook.Foreword"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Résumé</label>&nbsp;<span style="color:red;">*</span>
+                                <textarea class="no-resize" required style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Ebook.Abstract"></textarea>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="form-group">
+                            <div class="control-label">Téléchargeable &nbsp;<span style="color:red;">*</span></div>
+                            <label class="custom-switch mt-2">
+                                @*  @if (Ebook.Downloadable)
+                                {
+                                <input type="checkbox" name="Downloadable" asp-for="Ebook.Downloadable" checked class="custom-switch-input">
+                                }
+                                else
+                                {
+                                <input type="checkbox" name="Downloadable" asp-for="Ebook.Downloadable" class="custom-switch-input">
+                                } *@
+                                <span style="cursor:pointer" class="custom-switch-indicator"></span>
+                                <span class="custom-switch-description">J'accepte que ce livre soit téléchargeable</span>
+                            </label>
+                        </div>
+                    </div>
+                <div class="card-footer text-right">
+                    <a id="btn-cancel" href=javascript:history.go(-1) class="btn btn-secondary">&nbsp;Annuler&nbsp;</a>
+                    <a class="btn btn-primary text-white" style="cursor:pointer" type="submit" value="Submit">Enregistrer</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+

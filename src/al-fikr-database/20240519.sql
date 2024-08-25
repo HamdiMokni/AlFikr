@@ -1,0 +1,127 @@
+ALTER TABLE Author DROP FOREIGN KEY Author_Editor_Id_fk;
+
+ALTER TABLE Author
+ADD CONSTRAINT Author_Editor_Id_fk FOREIGN KEY (IdEditor)
+REFERENCES Editor (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE Chapter DROP FOREIGN KEY Chapter_ibfk_1;
+
+ALTER TABLE Chapter
+ADD CONSTRAINT Chapter_ibfk_1 FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE Collection DROP FOREIGN KEY fk_editor;
+
+ALTER TABLE Collection
+ADD CONSTRAINT fk_editor FOREIGN KEY (IdEditor)
+REFERENCES Editor (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentAuthor DROP FOREIGN KEY auth_fk;
+
+ALTER TABLE DocumentAuthor
+ADD CONSTRAINT auth_fk FOREIGN KEY (IdAuthor)
+REFERENCES Author (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentAuthor DROP FOREIGN KEY docum_fk;
+
+ALTER TABLE DocumentAuthor
+ADD CONSTRAINT docum_fk FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentCatalogue DROP FOREIGN KEY cat_fk;
+
+ALTER TABLE DocumentCatalogue
+ADD CONSTRAINT cat_fk FOREIGN KEY (IdCatalogue)
+REFERENCES Catalogue (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentCatalogue DROP FOREIGN KEY docu_fk;
+
+ALTER TABLE DocumentCatalogue
+ADD CONSTRAINT docu_fk FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentFiles DROP FOREIGN KEY DocumentFiles_ibfk_1;
+
+ALTER TABLE DocumentFiles
+ADD CONSTRAINT DocumentFiles_ibfk_1 FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentTheme DROP FOREIGN KEY doc_fk;
+
+ALTER TABLE DocumentTheme
+ADD CONSTRAINT doc_fk FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE DocumentTheme DROP FOREIGN KEY th_fk;
+
+ALTER TABLE DocumentTheme
+ADD CONSTRAINT th_fk FOREIGN KEY (IdTheme)
+REFERENCES Theme (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE SubTheme DROP FOREIGN KEY SubTheme_ibfk_1;
+
+ALTER TABLE SubTheme
+ADD CONSTRAINT SubTheme_ibfk_1 FOREIGN KEY (IdTheme)
+REFERENCES Theme (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE SubTheme DROP FOREIGN KEY SubTheme_ibfk_2;
+
+ALTER TABLE SubTheme
+ADD CONSTRAINT SubTheme_ibfk_2 FOREIGN KEY (IdCollection)
+REFERENCES Collection (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE TranslationGroup DROP FOREIGN KEY fk_document;
+
+ALTER TABLE TranslationGroup
+ADD CONSTRAINT fk_document FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE TranslationGroup DROP FOREIGN KEY fk_translationGroup;
+
+ALTER TABLE TranslationGroup
+ADD CONSTRAINT fk_translationGroup FOREIGN KEY (IdGroupRefs)
+REFERENCES TranslationGroup (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE VolumeGroup DROP FOREIGN KEY VolumeGroup_ibfk_1;
+
+ALTER TABLE VolumeGroup
+ADD CONSTRAINT VolumeGroup_ibfk_1 FOREIGN KEY (IdDocument)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+ALTER TABLE Ebook DROP FOREIGN KEY Ebook_ibfk_1;
+
+ALTER TABLE Ebook
+ADD CONSTRAINT Ebook_ibfk_1 FOREIGN KEY (Id)
+REFERENCES Document (Id)
+ON DELETE CASCADE;
+
+
+ALTER TABLE Document
+MODIFY BlankPages INT default 0;
+
+ALTER TABLE Document
+MODIFY Downloadable tinyint(1) default 0;
+
+ALTER TABLE Document
+MODIFY IsMultiVolume tinyint(1) default 0;
+
+ALTER TABLE Document
+MODIFY IsTranslated tinyint(1) default 0;
+
+ALTER TABLE VolumeGroup
+MODIFY NumVolume INT NULL;

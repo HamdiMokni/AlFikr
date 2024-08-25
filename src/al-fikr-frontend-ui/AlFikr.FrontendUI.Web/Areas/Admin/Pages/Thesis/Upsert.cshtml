@@ -1,0 +1,966 @@
+﻿@page
+@model ThesisModel
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+            <form id="myForm" method="post" enctype="multipart/form-data">
+                <div class="text-danger text-right" asp-validation-summary="ModelOnly"></div>
+                <div class="card-header">
+                    <h4>@(Model.Id == 0 ? "Ajouter" : "Editer") Thesis</h4>
+                </div>
+                @if (Model.Id != 0)
+                {
+                    <input type="hidden" asp-for="Id" />
+                    @*@if (Model.Profil == "Editor" || Model.Profil == "Partner")
+                        {
+                        <input type="hidden" asp-for="IdEditor" />
+                        <input type="hidden" asp-for="IdPartner" />
+                        }*@
+                }
+                <input type="hidden" asp-for="Thesis.DocumentType" value="Thesis" />
+                @*<input type="hidden" id="attachmentCoverPageName" asp-for="Thesis.CoverPageName" />
+                    <input type="hidden" id="attachmentFileDocumentName" asp-for="Thesis.FileDocumentName" />*@
+                <div class="text-danger text-right" asp-validation-summary="ModelOnly"></div>
+                <div class="card-body">
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>@localizer["Titre"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input id="OriginalTitle" required asp-for="Thesis.OriginalTitle" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>@localizer["Autres Titres"]</label>
+                                <input asp-for="Thesis.TitlesVariants" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>@localizer["Date de publication"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Thesis.PublicationDate" list="years" id="publicationDate" required pattern="[0-9]{4}" placeholder="YYYY" title="XXXX" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>@localizer["Type"]</label>&nbsp;<span style="color:red;">*</span>
+                                <select asp-for="Thesis.Type" class="select form-control">
+                                    <option value="" selected class="text-center">-- @localizer["Select"] --</option>
+                                    <option value="Phd">Phd</option>
+                                    <option value="Master">Master</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Page de Couverture"]</label>
+                                <input id="attachmentCoverPage" asp-for="attachmentCoverPage" name="attachmentCoverPage" type="file" accept=".png,.jpg,.jpeg,.gif" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Document"]</label>
+                                <input id="attachmentFileDocument" asp-for="attachmentDocument" name="attachmentDocument" type="file" accept=".pdf" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Nombre des pages"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Thesis.NbPages" required type="number" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Langue"]</label>&nbsp;<span style="color:red;">*</span>
+                                <select id="OriginalLanguage" required asp-for="Thesis.OriginalLanguage" class="form-control">
+                                    <option value="Français">@localizer["Français"]</option>
+                                    <option value="Anglais">@localizer["Anglais"]</option>
+                                    <option value="Arabe">@localizer["Arabe"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Pays"]</label>
+                                <select class="form-control" asp-for="Thesis.Country">
+                                    <option value="AF">Afghanistan </option>
+                                    <option value="CF">Afrique_Centrale </option>
+                                    <option value="ZA">Afrique_du_Sud </option>
+                                    <option value="AL">Albanie </option>
+                                    <option value="DZ">Algerie </option>
+                                    <option value="DEU">Allemagne </option>
+                                    <option value="AD">Andorre </option>
+                                    <option value="AO">Angola </option>
+                                    <option value="AI">Anguilla </option>
+                                    <option value="SA">Arabie_Saoudite </option>
+                                    <option value="AR">Argentine </option>
+                                    <option value="AM">Armenie </option>
+                                    <option value="AU">Australie </option>
+                                    <option value="AT">Autriche </option>
+                                    <option value="AZ">Azerbaidjan </option>
+                                    <option value="BS">Bahamas </option>
+                                    <option value="BD">Bangladesh </option>
+                                    <option value="BB">Barbade </option>
+                                    <option value="BH">Bahrein </option>
+                                    <option value="BE">Belgique </option>
+                                    <option value="BZ">Belize </option>
+                                    <option value="BJ">Benin </option>
+                                    <option value="BM">Bermudes </option>
+                                    <option value="BY">Bielorussie </option>
+                                    <option value="BO">Bolivie </option>
+                                    <option value="BW">Botswana </option>
+                                    <option value="BT">Bhoutan </option>
+                                    <option value="BA">Boznie_Herzegovine </option>
+                                    <option value="BR">Bresil </option>
+                                    <option value="BN">Brunei </option>
+                                    <option value="BG">Bulgarie </option>
+                                    <option value="BF">Burkina_Faso </option>
+                                    <option value="BI">Burundi </option>
+                                    <option value="KH">Cambodge </option>
+                                    <option value="CM">Cameroun </option>
+                                    <option value="CA">Canada </option>
+                                    <option value="CV">Cap_Vert </option>
+                                    <option value="CL">Chili </option>
+                                    <option value="CN">Chine </option>
+                                    <option value="CY">Chypre </option>
+                                    <option value="CO">Colombie </option>
+                                    <option value="KM">Comoros </option>
+                                    <option value="CG">Congo </option>
+                                    <option value="CD">Congo_democratique </option>
+                                    <option value="CK">Cook </option>
+                                    <option value="PRK">Coree_du_Nord </option>
+                                    <option value="KOR">Coree_du_Sud </option>
+                                    <option value="CR">Costa_Rica </option>
+                                    <option value="CI">Côte_d_Ivoire </option>
+                                    <option value="HR">Croatie </option>
+                                    <option value="CU">Cuba </option>
+                                    <option value="DK">Danemark </option>
+                                    <option value="DJ">Djibouti </option>
+                                    <option value="DM">Dominique </option>
+                                    <option value="EG">Egypte </option>
+                                    <option value="ARE">Emirats_Arabes_Unis </option>
+                                    <option value="ECU">ECUADOR </option>
+                                    <option value="ER">Erythree </option>
+                                    <option value="ES">Espagne </option>
+                                    <option value="EE">Estonie </option>
+                                    <option value="US">Etats_Unis </option>
+                                    <option value="ET">Ethiopie </option>
+                                    <option value="FK">Falkland </option>
+                                    <option value="FO">Feroe </option>
+                                    <option value="FJ">Fidji </option>
+                                    <option value="FI">Finlande </option>
+                                    <option value="FR">France </option>
+                                    <option value="GA">Gabon </option>
+                                    <option value="GM">Gambie </option>
+                                    <option value="GE">Georgie </option>
+                                    <option value="GH">Ghana </option>
+                                    <option value="GI">Gibraltar </option>
+                                    <option value="GR">Grece </option>
+                                    <option value="GD">Grenade </option>
+                                    <option value="GL">Greenland </option>
+                                    <option value="GP">Guadeloupe </option>
+                                    <option value="GU">Guam </option>
+                                    <option value="GT">Guatemala</option>
+                                    <option value="GG">Guernesey </option>
+                                    <option value="GN">Guinea </option>
+                                    <option value="GW">Guinea_Bissau </option>
+                                    <option value="GQ">Guinea_Equatoriale </option>
+                                    <option value="GY">Guyana </option>
+                                    <option value="GF">Guyane_Francaise </option>
+                                    <option value="HT">Haiti </option>
+                                    <option value="US-HI">Hawaii </option>
+                                    <option value="HN">Honduras </option>
+                                    <option value="HK">Hong_Kong </option>
+                                    <option value="HU">Hongrie </option>
+                                    <option value="IN">Inde </option>
+                                    <option value="ID">Indonesie </option>
+                                    <option value="IR">Iran </option>
+                                    <option value="IQ">Iraq </option>
+                                    <option value="IE">Irlande </option>
+                                    <option value="IS">Islande </option>
+                                    <option value="IL">Israel </option>
+                                    <option value="IT">italie </option>
+                                    <option value="JM">Jamaique </option>
+                                    <option value="JP">Japon </option>
+                                    <option value="JE">Jersey </option>
+                                    <option value="JO">Jordanie </option>
+                                    <option value="KZ">Kazakhstan </option>
+                                    <option value="KE">Kenya </option>
+                                    <option value="KG">Kirghizistan </option>
+                                    <option value="KI">Kiribati </option>
+                                    <option value="KW">Koweit </option>
+                                    <option value="LA">Laos </option>
+                                    <option value="LS">Lesotho </option>
+                                    <option value="LV">Lettonie </option>
+                                    <option value="LY">Liban </option>
+                                    <option value="LR">Liberia </option>
+                                    <option value="LI">Liechtenstein </option>
+                                    <option value="LT">Lituanie </option>
+                                    <option value="LU">Luxembourg </option>
+                                    <option value="MO">Macao </option>
+                                    <option value="MK">Macedoine </option>
+                                    <option value="MG">Madagascar </option>
+                                    <option value="MY">Malaisie </option>
+                                    <option value="MW">Malawi </option>
+                                    <option value="MV">Maldives </option>
+                                    <option value="ML">Mali </option>
+                                    <option value="MT">Malte </option>
+                                    <option value="MP">Mariannes du Nord </option>
+                                    <option value="MA">Maroc </option>
+                                    <option value="MH">Marshall </option>
+                                    <option value="MQ">Martinique </option>
+                                    <option value="MU">Maurice </option>
+                                    <option value="MR">Mauritanie </option>
+                                    <option value="YT">Mayotte </option>
+                                    <option value="MX">Mexique </option>
+                                    <option value="FM">Micronesie </option>
+                                    <option value="UM">Midway </option>
+                                    <option value="MD">Moldavie </option>
+                                    <option value="MC">Monaco </option>
+                                    <option value="MN">Mongolie </option>
+                                    <option value="MS">Montserrat </option>
+                                    <option value="MZ">Mozambique </option>
+                                    <option value="NA">Namibie </option>
+                                    <option value="NR">Nauru </option>
+                                    <option value="NP">Nepal </option>
+                                    <option value="NI">Nicaragua </option>
+                                    <option value="NE">Niger </option>
+                                    <option value="NG">Nigeria </option>
+                                    <option value="NU">Niue </option>
+                                    <option value="NF">Norfolk </option>
+                                    <option value="NO">Norvege </option>
+                                    <option value="NC">Nouvelle_Caledonie </option>
+                                    <option value="NZ">Nouvelle_Zelande </option>
+                                    <option value="OM">Oman </option>
+                                    <option value="UG">Ouganda </option>
+                                    <option value="UZ">Ouzbekistan </option>
+                                    <option value="PK">Pakistan </option>
+                                    <option value="PW">Palau </option>
+                                    <option value="PS">Palestine </option>
+                                    <option value="PA">Panama </option>
+                                    <option value="PG">Papouasie_Nouvelle_Guinee </option>
+                                    <option value="PY">Paraguay </option>
+                                    <option value="NL">Pays_Bas </option>
+                                    <option value="PE">Perou </option>
+                                    <option value="PH">Philippines </option>
+                                    <option value="PL">Pologne </option>
+                                    <option value="PF">Polynesie </option>
+                                    <option value="PR">Porto_Rico </option>
+                                    <option value="PT">Portugal </option>
+                                    <option value="QA">Qatar </option>
+                                    <option value="DO">Republique_Dominicaine </option>
+                                    <option value="CZ">Republique_Tcheque </option>
+                                    <option value="RE">Reunion </option>
+                                    <option value="RO">Roumanie </option>
+                                    <option value="GB">Royaume_Uni </option>
+                                    <option value="RU">Russie </option>
+                                    <option value="RW">Rwanda </option>
+                                    <option value="EH">Sahara Occidental </option>
+                                    <option value="LC">Sainte_Lucie </option>
+                                    <option value="SM">Saint_Marin </option>
+                                    <option value="SB">Salomon </option>
+                                    <option value="SV">Salvador </option>
+                                    <option value="WS">Samoa_Occidentales</option>
+                                    <option value="AS">Samoa_Americaine </option>
+                                    <option value="ST">Sao_Tome_et_Principe </option>
+                                    <option value="SN">Senegal </option>
+                                    <option value="SC">Seychelles </option>
+                                    <option value="SL">Sierra Leone </option>
+                                    <option value="SG">Singapour </option>
+                                    <option value="SK">Slovaquie </option>
+                                    <option value="SI">Slovenie</option>
+                                    <option value="SO">Somalie </option>
+                                    <option value="SD">Soudan </option>
+                                    <option value="LK">Sri_Lanka </option>
+                                    <option value="SE">Suede </option>
+                                    <option value="CH">Suisse </option>
+                                    <option value="SR">Surinam </option>
+                                    <option value="SZ">Swaziland </option>
+                                    <option value="SY">Syrie </option>
+                                    <option value="TJ">Tadjikistan </option>
+                                    <option value="TW">Taiwan </option>
+                                    <option value="TO">Tonga </option>
+                                    <option value="TZ">Tanzanie </option>
+                                    <option value="TD">Tchad </option>
+                                    <option value="TH">Thailande </option>
+                                    <option value="TL">Timor_Oriental </option>
+                                    <option value="TG">Togo </option>
+                                    <option value="TT">Trinite_et_Tobago </option>
+                                    <option value="SH">Tristan de cuncha </option>
+                                    <option value="TN">Tunisie </option>
+                                    <option value="TM">Turmenistan </option>
+                                    <option value="TR">Turquie </option>
+                                    <option value="UA">Ukraine </option>
+                                    <option value="UY">Uruguay </option>
+                                    <option value="VU">Vanuatu </option>
+                                    <option value="VE">Venezuela </option>
+                                    <option value="VI">Vierges_Americaines </option>
+                                    <option value="VG">Vierges_Britanniques </option>
+                                    <option value="VN">Vietnam </option>
+                                    <option value="UM">Wake </option>
+                                    <option value="WF">Wallis et Futuma </option>
+                                    <option value="YE">Yemen </option>
+                                    <option value="MK">Yougoslavie </option>
+                                    <option value="ZM">Zambie </option>
+                                    <option value="ZW">Zimbabwe </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Thesis.IsTranslated">@localizer["Traduit"]</label><br />
+                                <select class="form-control" asp-for="Thesis.IsTranslated" id="traduit">
+                                    <option value="" hidden disabled selected>-- @localizer["Select"] --</option>
+                                    <option value="true">@localizer["Oui"]</option>
+                                    <option value="false">@localizer["Non"]</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Autres Langue"]</label>
+                                <input asp-for="Thesis.LanguagesVariants" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Auteurs principaux"]</label>&nbsp;<span style="color:red;">*</span><a href="#newauthor" data-bs-toggle="modal" class="pull-right" style="text-decoration:underline">@localizer["Ajouter"]</a>
+                                <select id="authors" name="IdAuthor" style="width:100%" class="form-control" asp-for="IdAuthor">
+                                    <option value="">@localizer["Select Author"]</option>
+                                    @foreach (AlFikr.FrontendUI.Entities.AuthorEntity author in Model.AllAuthors)
+                                    {
+
+                                        @if (Model.Thesis != null && Model.Thesis.MainAuthorsIds.Contains(author.Id.ToString()))
+                                        {
+                                            <option value="@author.Id" selected>
+                                                @author.FirstName @author.LastName (@author.ArName)
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@author.Id">
+                                                @author.FirstName @author.LastName (@author.ArName)
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Collaborateurs"]</label>
+                                <select id="collaborateurs" name="IdSecondAuthor" style="width:100%" class="form-control" asp-for="IdSecondAuthor">
+                                    <option value="">@localizer["Select Second Author"]</option>
+                                    @foreach (AlFikr.FrontendUI.Entities.AuthorEntity author in Model.AllAuthors)
+                                    {
+                                        @if (Model.Thesis != null && Model.Thesis.MainAuthorsIds.Contains(author.Id.ToString()))
+                                        {
+                                            <option value="@author.Id" selected>
+                                                @author.FirstName @author.LastName (@author.ArName)
+                                            </option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@author.Id">
+                                                @author.FirstName @author.LastName (@author.ArName)
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            @*
+                                <div class="form-group">
+                                   <label>&Eacute;valuateurs</label><a href="#newreviewer" data-toggle="modal" class="pull-right" style="text-decoration:underline">@localizer["Ajouter"]</a>
+                                   <select id="evaluateurs" name="evaluateurs" style="width:100%" class="form-control">
+                                   </select>
+                                </div>
+                            *@
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Thèmes"]</label>
+                                <select id="themes" name="IdTheme" style="width: 100%" class="form-control" asp-for="IdTheme">
+                                    <option value="">@localizer["Select Theme"]</option>
+                                    @foreach (var item in Model.AllThemes)
+                                    {
+
+                                        @if (Model.Thesis != null && Model.Thesis.ThemesIds.Contains(item.Id.ToString()))
+                                        {
+                                            <option value="@item.Id" selected>@item.Title (@item.ArTitle)</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.Title (@item.ArTitle)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Collection"]</label>
+                                <select id="Collection" name="IdCollection" style="width:100%" class="form-control" asp-for="IdCollection">
+                                    <option value="">@localizer["Select Collection"]</option>
+                                    @foreach (AlFikr.FrontendUI.Entities.CollectionEntity item in Model.AllCollections)
+                                    {
+                                        @if (Model.Thesis != null && Model.Thesis.IdCollection == item.Id)
+                                        {
+                                            <option value="@item.Id" selected>@item.Title (@item.ArTitle)</option>
+
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id">@item.Title (@item.ArTitle)</option>
+
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Date de Soutenance"]</label>
+                                <input id="PlaceOfSoutenance" asp-for="Thesis.DefenceDate" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12">
+                        <div class="col-12 row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>@localizer["Displine"]</label>&nbsp;<span style="color:red;">*</span>
+                                    <input asp-for="Thesis.Discipline" required class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>@localizer["Lieu de Soutenance"]</label>
+                                    <input id="PlaceOfSoutenance" asp-for="Thesis.University" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>@localizer["University"]</label>&nbsp;<span style="color:red;">*</span>
+                                    <input asp-for="Thesis.University" required class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- supervisor section  -->
+                    <div class="col-12 row " id="">
+                        <div class="col-12 d-flex">
+                            <h4>
+                                @localizer["Supervisors"]
+                            </h4>
+                        </div>
+                        <div class="col-12 row" id="supervisor_section">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Supervisor Name"]</label><span style="color:red;">*</span>
+                                    <input name="supervisor_name" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Supervisor Role"]</label><span style="color:red;">*</span>
+                                    <select class="form-control" name="supervisor_role">
+                                        <option value="Encadrant">@localizer["Encadrant"]</option>
+                                        <option value="Encadrant Professionnel">@localizer["Encadrant Professionnel"]</option>
+                                        <option value="Co-encadrant">@localizer["Co-encadrant"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Supervisor Title"]</label><span style="color:red;">*</span>
+                                    <input name="supervisor_title" class="form-control">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-success h-40 mt-auto mb-auto"><i class="fas fa-check" onclick="addSupervisor()"></i></button>
+                        </div>
+                        <div class="col-12" id="supervisor-list">
+                            <input id="supervisors" name="supervisors" asp-for="supervisors" hidden />
+                            <input id="supervisorList" name="supervisorList" asp-for="supervisorList" hidden />
+                            @*@if (Model.Thesis.SupervisorList.Any())
+                                {
+                                    foreach (var supervisor in Model.Thesis.SupervisorList)
+                                    {
+                                        var supervisorString = $"{supervisor.Name}-{supervisor.Role}-{supervisor.Title}";
+                                        <div>
+                                            @supervisorString
+                                            <button type="button" class="fas fa-trash ml-2" onclick="removeSupervisor(this)">-</button>
+                                        </div>
+                                    }
+                                }*@
+                        </div>
+
+                    </div>
+                    <!-- supervisor section  -->
+                    <!-- evaluateurs section  -->
+                    <div class=" col-12 row " id="">
+                        <div class="col-12 d-flex">
+                            <h4>
+                                @localizer["Evaluateurs"]
+                            </h4>
+                            <a href="#newreviewer" data-toggle="modal" class="pull-right" style="text-decoration:underline">@localizer["Ajouter"]</a>
+                        </div>
+                        <div class="col-12 row" id="evaluateur_section">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Evaluateur's Name"]</label><span style="color:red;">*</span>
+                                    <select class="form-control" id="evaluateurs_name" name="evaluateur_name">
+                                        @foreach (AlFikr.FrontendUI.Entities.ReviewerEntity reviewer in Model.AllReviewers)
+                                        {
+                                            @if ( Model.Thesis != null && Model.Thesis.ReviewerIds.Any(pair => pair.Key == reviewer.Id))
+                                            {
+                                                <option value="@reviewer.Id" selected>@reviewer.reviewerName (@reviewer.reviewerArName)</option>
+
+                                            }
+                                            else
+                                            {
+                                                <option value="@reviewer.Id">@reviewer.reviewerName (@reviewer.reviewerArName)</option>
+
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Evaluateur's Role"]</label><span style="color:red;">*</span>
+                                    <select required class="form-control" name="evaluateur_role">
+                                        <option value="President">@localizer["Président du jury"]</option>
+                                        <option value="Membre">@localizer["membre de jury"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Evaluateur Title"]</label><span style="color:red;">*</span>
+                                    <input name="evaluateur_title" class="form-control">
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-success h-40 mt-auto mb-auto"><i class="fas fa-check" onclick="addevaluateur()"></i></button>
+                        </div>
+                        <div class="col-12" id="evaluateur-list">
+                            <input id="reviewers" name="reviewers" asp-for="reviewers" hidden />
+                            <input id="ReviewerIds" name="ReviewerIds" asp-for="ReviewerIds" hidden />
+                            @if (Model.Thesis!=null && Model.Thesis.ReviewerIds.Any())
+                            {
+                                foreach (var pair in Model.Thesis.ReviewerIds)
+                                {
+                                    var reviewer = Model.AllReviewers.FirstOrDefault(r => r.Id == pair.Key);
+                                    if (reviewer != null)
+                                    {
+                                        var evaluateurString = $"{reviewer.Id}-{reviewer.reviewerName} ({reviewer.reviewerArName})-{pair.Value}";
+                                        <div>
+                                            @evaluateurString
+                                            <button type="button" class="fas fa-trash ml-2" onclick="removeEvaluateur(this)">-</button>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+
+                    </div>
+                    <!-- evaluateurs section  -->
+                    <div class="row col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group mb-0">
+                                <label>@localizer["Mots clés"]</label>
+                                <textarea class="no-resize" style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Thesis.Keywords"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-0">
+                                <label>@localizer["Commentaires"]</label>
+                                <textarea class="no-resize" style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Thesis.Notes"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-0">
+                                <label>@localizer["Préface"]</label>
+                                <textarea class="no-resize" style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Thesis.Foreword"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>@localizer["Résumé"]</label>
+                                <textarea class="no-resize" style="width:100%;background-color: #fdfdff;border-color: #e4e6fc;border: 1px solid #ced4da;border-radius:.25rem;" rows="6" asp-for="Thesis.Abstract"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row col-md-12 mb-2">
+                        <div class="teamdetail text-right">
+                            <a href="javascript:void(0)" onclick="toggle_visibility('team4'); toggle_plus('team4Plus');">
+                                <span id="label" class="showlabelplus"></span> @localizer["plus de détails"] [<span id="team4Plus" class="showplus"></span>]
+                            </a>
+                        </div>
+                    </div>
+                    <div id="team4" style="display:none;" class="teamtxt">
+                        <div class="row col-md-12">
+                            <div class="col-md-3" id="TranslatorArea" hidden="hidden">
+                                <div class="form-group">
+                                    <label>@localizer["Traducteur"]</label>
+                                    <input asp-for="Thesis.Translator" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Type d'accès"]</label>
+                                    <select class="form-control" asp-for="Thesis.AccessType">
+                                        <option value="Open access" selected>@localizer["Open access"]</option>
+                                        <option value="Paying access">@localizer["Paying access"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Url"]</label>
+                                    <input asp-for="Thesis.Url" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Sous-titre"]</label>
+                                    <input asp-for="Thesis.Subtitle" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Description physique"]</label>
+                                    <input asp-for="Thesis.PhysicalDescription" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Pages blanches (au début)"]</label>
+                                    <input type="number" asp-for="Thesis.BlankPages" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Supports additionnels"]</label>
+                                    <input asp-for="Thesis.AccompanyingMaterials" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>@localizer["Etat Livre"]</label>
+                                    <select asp-for="Thesis.State" class="form-control">
+                                        <option value="published" selected>@localizer["Publié"]</option>
+                                        <option value="unpublished">@localizer["Non Publié"]</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row pull-right">
+                        <input type="button" onclick="location.href='@Url.Action("Index", "Documents")'" value="@localizer["Annuler"]" class="btn btn-danger">
+                        &nbsp;
+                        <input type="submit" value="@localizer["Enregistrer"]" class="btn btn-success">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Modal with form -->
+<div class="modal fade" id="newauthor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviewer Modal with form -->
+<div class="modal fade" id="newreviewer">
+    <div class="modal-dialog modal-lg" role="document" tabindex="-1">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h3 class="modal-title"><b>&Eacute;valuateur</b></h3>
+                    </div>
+                </div>
+                <hr />
+                <form id="Reviewer-form" method="post">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Nom"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input id="LastNameReviewer" name="LastName" required class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Prénom"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input id="FirstNameReviewer" name="FirstName" required class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Intitulé Arabe"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input id="ArNameReviewer" name="ArName" required class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>@localizer["Editeur"]</label>&nbsp;<span style="color:red;">*</span>
+                                <select id="Editeur" name="IdEditor" required class="form-control">
+                                    @foreach (AlFikr.FrontendUI.Entities.ReviewerEntity reviewer in Model.AllReviewers)
+                                    {
+                                        <option value="@reviewer.Id">@reviewer.reviewerName </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12 text-right">
+                            <button type="button" onclick="UpsertReviewer()" class="btn btn-primary form-control">@localizer["Ajouter"]</button>
+                        </div>
+                        <div class="col-md-12">
+                            <br />
+                            <h3 style="text-decoration:underline">@localizer["Liste des &Eacute;valuateurs"]</h3>
+                            <div class="table-responsive" id="tabreviewers">
+                                <table id="tablereviewers" class="table table-bordered table-hover table-striped" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>@localizer["Nom"]</th>
+                                            <th>@localizer["Prénom"]</th>
+                                            <th>@localizer["Intitulé Arabe"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        outline: 0;
+        z-index: 1050; /* Bootstrap modals have a z-index of 1050 */
+    }
+
+    .modal-dialog {
+        position: relative;
+        width: auto;
+        margin: 1.75rem auto;
+    }
+</style>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Plus/Minus Toggle
+        function toggle_plus(id) {
+            var f = document.getElementById(id);
+            var l = document.getElementById('label');
+            var m = document.getElementById('labelMultiVolume');
+            var t = document.getElementById('labelTranslation');
+
+            if (f.classList.contains("showplus")) {
+                f.classList.remove("showplus");
+                f.classList.add("showminus");
+
+                if (id == "MultiVolumeSectionPlus") {
+                    m.classList.remove("showlabelplus");
+                    m.classList.add("showlabelminus");
+                }
+                else if (id == "TranslatedSectionPlus") {
+                    t.classList.remove("showlabelplus");
+                    t.classList.add("showlabelminus");
+                }
+                else {
+                    l.classList.remove("showlabelplus");
+                    l.classList.add("showlabelminus");
+                }
+            }
+            else {
+                f.classList.remove("showminus");
+                f.classList.add("showplus");
+
+                if (id == "MultiVolumeSectionPlus") {
+                    m.classList.remove("showlabelminus");
+                    m.classList.add("showlabelplus");
+                } else if (id == "TranslatedSectionPlus") {
+                    t.classList.remove("showlabelminus");
+                    t.classList.add("showlabelplus");
+                }
+                else {
+                    l.classList.remove("showlabelminus");
+                    l.classList.add("showlabelplus");
+                }
+            }
+        }
+        // Toggle to show and hide content below the link
+        function toggle_visibility(id) {
+            var e = document.getElementById(id);
+            if (e.style.display == 'block') {
+                e.style.display = 'none';
+            } else {
+                e.style.display = 'block';
+            }
+        }
+        let supervisors = [];
+        /*   Reviewer Funcs     */
+        function addevaluateur() {
+            // Get the values from the input fields
+            var evaluateurSelect = document.getElementById('evaluateurs_name');
+            var evaluateurName = evaluateurSelect.options[evaluateurSelect.selectedIndex].text;
+            var evaluateurId = evaluateurSelect.value;
+            var evaluateurRole = document.querySelector('#evaluateur_section select[name="evaluateur_role"]').value;
+            console.log("evaluateurName")
+            console.log(evaluateurName)
+            // Create the string in the desired format
+            var evaluateurString = evaluateurId + '-' + evaluateurName + '-' + evaluateurRole;
+
+            var evaluateurListItems = document.getElementById('reviewers').value;
+
+            // Update the hidden input field with the new supervisor string
+            document.getElementById('reviewers').value = (evaluateurListItems ? evaluateurListItems + '|' : '') + evaluateurString;
+
+            // Append the string to the supervisor list with a delete button
+            var evaluateurList = document.querySelector('#evaluateur-list');
+            var evaluateurItem = document.createElement('div');
+            evaluateurItem.textContent = evaluateurString;
+
+
+            // Add a delete button to the supervisor item
+            var deleteButton = document.createElement('button');
+            deleteButton.classList.add("fas");
+            deleteButton.classList.add("fa-trash");
+            deleteButton.classList.add("ml-2");
+            deleteButton.textContent = '-';
+            deleteButton.addEventListener('click', function () {
+                evaluateurList.removeChild(evaluateurItem);
+
+                // Update the hidden input field after deletion
+                var updatedEvaluatorList = Array.from(evaluateurList.children)
+                    .map(child => child.textContent)
+                    .join('|');
+                document.getElementById('reviewers').value = updatedEvaluatorList;
+            });
+            evaluateurItem.appendChild(deleteButton);
+            evaluateurList.appendChild(evaluateurItem);
+            evaluateurName = '';
+
+        }
+
+        function removeEvaluateur(button) {
+            var evaluateurItem = button.parentElement;
+            var evaluateurList = document.querySelector('#evaluateur-list');
+            evaluateurList.removeChild(evaluateurItem);
+
+            // Update the hidden input field after deletion
+            var updatedEvaluatorList = Array.from(evaluateurList.children)
+                .map(child => child.textContent)
+                .join('|');
+            document.getElementById('reviewers').value = updatedEvaluatorList;
+        }
+        /*   Supvervisor Funcs     */
+        function addSupervisor() {
+            // Get the values from the input fields
+            var supervisorName = document.querySelector('#supervisor_section input[name="supervisor_name"]').value;
+            var supervisorRole = document.querySelector('#supervisor_section select[name="supervisor_role"]').value;
+            var supervisorTitle = document.querySelector('#supervisor_section input[name="supervisor_title"]').value;
+
+            // Create the string in the desired format
+            var supervisorString = supervisorName + '-' + supervisorRole + '-' + supervisorTitle;
+            var SupervisorListItems = document.getElementById('supervisors').value;
+
+            // Update the hidden input field with the new supervisor string
+            document.getElementById('supervisors').value = (SupervisorListItems ? SupervisorListItems + '|' : '') + supervisorString;
+
+            // Append the string to the supervisor list with a delete button
+            var supervisorList = document.querySelector('#supervisor-list');
+            var supervisorItem = document.createElement('div');
+            supervisorItem.textContent = supervisorString;
+
+            // Add a delete button to the supervisor item
+            var deleteButton = document.createElement('button');
+            deleteButton.classList.add("fas", "fa-trash", "ml-2");
+            deleteButton.textContent = '-';
+            deleteButton.addEventListener('click', function () {
+                supervisorList.removeChild(supervisorItem);
+
+                // Update the hidden input field after deletion
+                var updatedSupervisorList = Array.from(supervisorList.children)
+                    .map(child => child.textContent)
+                    .join('|');
+                document.getElementById('supervisors').value = updatedSupervisorList;
+            });
+
+            supervisorItem.appendChild(deleteButton);
+            supervisorList.appendChild(supervisorItem);
+
+            // Clear the input fields
+            document.querySelector('#supervisor_section input[name="supervisor_name"]').value = '';
+            document.querySelector('#supervisor_section input[name="supervisor_title"]').value = '';
+        }
+
+        function removeSupervisor(button) {
+            var supervisorItem = button.parentElement;
+            var supervisorList = document.querySelector('#supervisor-list');
+            supervisorList.removeChild(supervisorItem);
+
+            // Update the hidden input field after deletion
+            var updatedSupervisorList = Array.from(supervisorList.children)
+                .map(child => child.textContent)
+                .join('|');
+            document.getElementById('supervisors').value = updatedSupervisorList;
+        }
+
+
+        function deleteDiv(button) {
+            var divToRemove = button.parentNode; // Get the parent <div> element
+
+            if (divToRemove) {
+                divToRemove.remove();
+            }
+        }
+
+    </script>
+}

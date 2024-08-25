@@ -1,0 +1,62 @@
+﻿@page
+
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Author.IndexModel
+@{
+}
+
+<partial name="ErrorMessageAlert" model="Model.ErrorText" />
+<div class="row" style="padding-bottom:1%">
+    <div class="col-md-7">
+        <h2 style="color:#6777ef">@localizer["Liste des auteurs"] (@Model.Authors.Count)</h2>
+    </div>
+    <div class="col-md-5 text-right">
+        <form asp-action="Import" class="col-md-12 border p-1" method="post" enctype="multipart/form-data">
+            <input name="file" accept=".xls,.xlsx" type="file" />
+            <button type="submit" onclick="$('.loader').show()" class="btn btn-primary text-white">@localizer["Importer"]</button>
+            <a asp-page="/Author/Upsert" asp-area="Admin" class="btn btn-primary text-white">@localizer["Ajouter"]</a>
+        </form>
+    </div>
+</div>
+
+<table id="authorsTable" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>@localizer["First Name"]</th>
+            <th>@localizer["Last Name"]</th>
+            <th>@localizer["Arabic Name"]</th>
+            <th>@localizer["OrcId"]</th>
+            <th>@localizer["Email"]</th>
+            <th class="text-center">@localizer["Action"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Authors != null)
+        {
+            foreach(var item in Model.Authors)
+            {
+                <tr>
+                    <td>@item.FirstName</td>
+                    <td>@item.LastName</td>
+                    <td>@item.ArName</td>
+                    <td>@item.OrcId</td>
+                    <td>@item.Email</td>
+                    <td class="text-center">
+                        <div class="dropdown dropdown-action">
+                            <a href="#" class="" data-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" asp-page="/Author/Upsert" asp-area="Admin" asp-route-id="@item.Id"><i class="bi bi-pencil-square mr-3"></i>@localizer["Editer"]</a>
+                                <form id="deleteAuthor" method="post" asp-page-handler="Delete" asp-route-id="@item.Id" method="post">
+                                    <a class="dropdown-item" href="javascript:void(0)" onclick="deleteAuthor()"><i class="bi bi-trash mr-3"></i>@localizer["Supprimer"]</a>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/Author.js"> </script>
+}

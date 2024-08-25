@@ -1,0 +1,5 @@
+ALTER TABLE Author 
+ADD COLUMN IdEditor INTEGER NULL;
+
+ALTER TABLE Author
+ADD CONSTRAINT Author_Editor_Id_fk FOREIGN KEY (IdEditor) REFERENCES Editor (Id);

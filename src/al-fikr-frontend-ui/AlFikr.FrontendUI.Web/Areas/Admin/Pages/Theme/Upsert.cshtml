@@ -1,0 +1,51 @@
+﻿@page "{id:int?}"
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Theme.UpsertModel
+
+<partial name="ErrorMessageAlert" model="Model.ErrorText" />
+<div class="row">
+    <div class="col-12 col-md-12 col-lg-12">
+        <div class="card">
+            <form id="themeForm" method="post">
+                <div class="text-danger text-right" asp-validation-summary="ModelOnly"></div>
+                <div class="card-header">
+                    <h4>@(Model.Theme?.Id != null ? @localizer["Editer"] : @localizer["Ajouter"]) @localizer["theme"]</h4>
+                </div>
+                <input type="hidden" asp-for="Theme.Id" />
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Titre"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Theme.Title" class="form-control" />
+                                <span asp-validation-for="Theme.Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Intitulé Arabe"]</label>&nbsp;<span style="color:red;">*</span>
+                                <input asp-for="Theme.ArTitle" class="form-control" />
+                                <span asp-validation-for="Theme.ArTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>@localizer["Abrévation"]</label>
+                                <input asp-for="Theme.ShortTitle" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>@localizer["Description"]</label>
+                                <textarea asp-for="Theme.Description" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a href=javascript:history.go(-1) class="btn btn-secondary">@localizer["Annuler"]</a>
+                    <button type="submit" class="btn btn-primary">@localizer["Enregistrer"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

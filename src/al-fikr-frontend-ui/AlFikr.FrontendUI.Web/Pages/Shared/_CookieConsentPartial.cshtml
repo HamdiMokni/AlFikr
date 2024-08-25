@@ -1,0 +1,170 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var showBanner = !consentFeature?.CanTrack ?? false;
+    var cookieString = consentFeature?.CreateConsentCookie();
+}
+<style>
+    .wrapper {
+        z-index: 1004;
+        position: fixed;
+        right: -370px;
+        bottom: 50px;
+        max-width: 345px;
+        width: 100%;
+        background: #fff;
+        border-radius: 8px;
+        padding: 15px 25px 22px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .wrapper.show {
+            right: 20px;
+        }
+
+    .title-box {
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
+        color: #ecb43a;
+        margin-bottom: 15px;
+    }
+
+        .title-box i {
+            font-size: 32px;
+        }
+
+        .title-box h3 {
+            font-size: 24px;
+            font-weight: 500;
+        }
+
+    .info {
+        margin-bottom: 15px;
+    }
+
+        .info p {
+            font-size: 16px;
+            font-weight: 400;
+            color: #333;
+        }
+
+            .info p a {
+                color: #ecb43a;
+                text-decoration: none;
+            }
+
+                .info p a:hover {
+                    text-decoration: underline;
+                }
+
+    .buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .button {
+        width: calc(100% / 2 - 10px);
+        padding: 8px 0;
+        border: none;
+        border-radius: 4px;
+        background-color: #ecb43a;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+
+    .button:hover {
+        background-color: #2f2e2b;
+    }
+
+    .card-table {
+        word-break: break-all;
+    }
+</style>
+@if (showBanner)
+{
+    @* <div  class="alert alert-info alert-dismissible fade show" role="alert">*@
+    <div id="cookieConsent" class="wrapper alert alert-info alert-dismissible fade show" role="alert" style="background-color: #ffffff!important;">
+        <div class="title-box">
+
+            <h3><i class="fa-solid fa-cookie-bite" style="color:#ecb43a;"></i>&nbsp;&nbsp; Cookies Consent </h3>
+        </div>
+        <div class="info">
+            <p>
+                This website use cookies to help you have a superior and more relevant
+                browsing experience on the website. <a href="#ReadMore" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample" style="color:#ecb43a!important;"> Read more...</a>
+            </p>
+        </div>
+        <div class="collapse" id="ReadMore">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="color:#ecb43a;font-size: 12px;">
+                                Nom
+                            </th>
+                            <th style="color:#ecb43a;font-size: 12px;">
+                                Fournisseur
+                            </th>
+                            <th style="color:#ecb43a;font-size: 12px;">
+                                Finalité
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="font-size: 12px;">Session</td>
+                            <td style="font-size: 12px;">www.Al-Fikr.com</td>
+                            <td style="font-size: 12px;">track and identify requests from a single browser</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 12px;">Culture</td>
+                            <td style="font-size: 12px;">www.Al-Fikr.com</td>
+                            <td style="font-size: 12px;">track the user's preferred culture information</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 12px;">Antiforgery</td>
+                            <td style="font-size: 12px;">www.Al-Fikr.com</td>
+                            <td style="font-size: 12px;">stop unauthorised posting of content to a website</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 12px;">Consent</td>
+                            <td style="font-size: 12px;">www.Al-Fikr.com</td>
+                            <td style="font-size: 12px;">allows you to ask for (and track) consent from your users</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="buttons">
+
+            <button class="button" id="acceptBtn" data-dismiss="alert" aria-label="Close" data-cookie-string="@cookieString">Accept</button>
+        </div>
+    </div>
+    <script>
+        buttons = document.querySelectorAll('.button');
+        (function () {
+            var button = document.querySelector("#cookieConsent button[data-cookie-string]");
+
+            button.addEventListener("click", function (event) {
+                var cookieContainer = document.querySelector("#cookieConsent");
+                cookieContainer.remove();
+                document.cookie = button.dataset.cookieString;
+
+
+            }, false);
+        })();
+    </script>
+}
