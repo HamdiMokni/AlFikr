@@ -40,7 +40,24 @@ namespace AlFikr.ThesisService.Api.Controllers
 
 			return _thesisService.GetThesis(id);
 		}
-		[HttpPost]
+
+        [HttpPost("advanced-search")]
+        public IActionResult AdvancedSearch([FromBody] List<AdvancedSearchItem> criteria)
+        {
+            _logger.LogInformation("Advanced search request received with criteria: {@Criteria}", criteria);
+
+            if (criteria == null || !criteria.Any())
+                return BadRequest("Search criteria cannot be null or empty.");
+
+            var thesis = _thesisService.AdvancedSearch(criteria);
+
+            if (thesis == null || !thesis.Any())
+                return NotFound("No documents found matching the search criteria.");
+
+            return Ok(thesis);
+        }
+
+        [HttpPost]
 		public IActionResult InsertThesis(ThesisEntity thesisEntity)
 		{
 			if (thesisEntity == null)

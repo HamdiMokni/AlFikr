@@ -1,9 +1,12 @@
 ﻿using AlFikr.ThesisService.Data.Models;
 using AlFikr.ThesisService.Entities;
 using AutoMapper;
+using Dapper;
 using Microsoft.EntityFrameworkCore; // Add this using directive
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MySqlConnector;
+using System.Text;
 
 namespace AlFikr.ThesisService.Business
 {
@@ -48,7 +51,56 @@ namespace AlFikr.ThesisService.Business
 			}
 		}
 
-		public ThesisEntity? GetThesis(int id)
+        public IEnumerable<ThesisEntity> AdvancedSearch(List<AdvancedSearchItem> criteria)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(configuration.GetConnectionString("AlFikr")))
+                {
+                    var sql = new StringBuilder("SELECT * FROM Document WHERE ");
+                    var parameters = new DynamicParameters();
+                    bool firstCriterion = true;
+
+                    foreach (var criterion in criteria)
+                    {
+                        if (!string.IsNullOrEmpty(criterion.Field) && !string.IsNullOrEmpty(criterion.Expression))
+                        {
+                            if (!firstCriterion)
+                            {
+                                sql.Append($" {criterion.Operator} ");
+                            }
+                            else
+                            {
+                                firstCriterion = false;
+                            }
+
+                            var parameterName = $"@{criterion.Field}{parameters.ParameterNames.Count()}";
+                            sql.Append($"({criterion.Field} LIKE {parameterName})");
+                            parameters.Add(parameterName, $"%{criterion.Expression}%");
+                        }
+                    }
+
+                    if (firstCriterion)
+                    {
+                        sql.Append("1=1");
+                    }
+
+                    var query = sql.ToString();
+                    _logger.LogInformation("Executing SQL Query: {Query}", query);
+                    _logger.LogInformation("Parameters: {@Parameters}", parameters);
+
+                    return connection.Query<ThesisEntity>(query, parameters);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} \n", ex);
+                throw;
+            }
+        }
+
+
+        public ThesisEntity? GetThesis(int id)
 		{
 			try
 			{
@@ -91,9 +143,14 @@ namespace AlFikr.ThesisService.Business
 				SecondaryAuthorsIds = thesis.IdNavigation?.Documentauthors?.Where(x => x.Role.Equals("Co-Author")).Select(x => x.IdAuthor.ToString()).ToArray() ?? Array.Empty<string>(),
 				ThemesIds = thesis.IdNavigation?.Documentthemes?.Select(x => x.IdTheme.ToString()).ToArray() ?? Array.Empty<string>(),
 				CataloguesIds = thesis.IdNavigation?.Documentcatalogues?.Select(x => x.IdCatalogue.ToString()).ToArray() ?? Array.Empty<string>(),
-				SupervisorsIds = thesis.Thesissupervisors?.Select(x => new KeyValuePair<int, string>(x.SupervisorId, x.Role)).ToArray() ?? new KeyValuePair<int, string>[0],
-				ReviewerIds = thesis.Thesisreviewers?.Select(x => new KeyValuePair<int, string>(x.ReviewerId, x.Role)).ToList() ?? new List<KeyValuePair<int, string>>(),
-				Doi = thesis.IdNavigation?.Doi,
+                //SupervisorsIds = thesis.Thesissupervisors?.Select(x => new KeyValuePair<int, string>(x.SupervisorId, x.Role)).ToArray() ?? new KeyValuePair<int, string>[0],
+                //ReviewerIds = thesis.Thesisreviewers?.Select(x => new KeyValuePair<int, string>(x.ReviewerId, x.Role)).ToList() ?? new List<KeyValuePair<int, string>>(),
+
+                SupervisorsIds = thesis.Thesissupervisors?.Select(x => new KeyValuePair<int, string>(x.SupervisorId ?? 0, x.Role)).ToArray() ?? new KeyValuePair<int, string>[0],
+                ReviewerIds = thesis.Thesisreviewers?.Select(x => new KeyValuePair<int, string>(x.ReviewerId ?? 0, x.Role)).ToList() ?? new List<KeyValuePair<int, string>>(),
+
+
+                Doi = thesis.IdNavigation?.Doi,
 				MarcRecordNumber = thesis.IdNavigation?.MarcRecordNumber,
 				OriginalTitle = thesis.IdNavigation?.OriginalTitle,
 				TitlesVariants = thesis.IdNavigation?.TitlesVariants,
