@@ -31,6 +31,8 @@ public interface IThesisServiceApiClient
 	/*   Reviewer   */
 	Task<List<ReviewerEntity>> GetReviewersAsync();
 	Task<ReviewerEntity> GetReviewerAsync(int id);
+    Task<List<ThesisEntity>> AdvancedSearchThesesAsync(List<AdvancedSearchItem> criteria);
+
 
 }
 

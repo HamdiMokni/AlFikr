@@ -259,7 +259,13 @@ public class ThesisServiceApiClient : ClientBase, IThesisServiceApiClient
 		}
 	}
 
-
+    public async Task<List<ThesisEntity>> AdvancedSearchThesesAsync(List<AdvancedSearchItem> criteria)
+    {
+        var response = await _httpClient.PostAsJsonAsync("Thesis/advanced-search", criteria);
+        response.EnsureSuccessStatusCode();
+        var responseContent = await response.Content.ReadAsStringAsync();
+        return JsonConvert.DeserializeObject<List<ThesisEntity>>(responseContent);
+    }
 
 }
 

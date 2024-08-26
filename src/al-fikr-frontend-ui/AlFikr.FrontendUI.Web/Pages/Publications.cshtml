@@ -1,0 +1,77 @@
+﻿@page "{ids}"
+@model AlFikr.FrontendUI.Web.Pages.PublicationsModel
+@{
+    ViewData["Title"] = "Publications";
+}
+
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">Publications</h2>
+    @if (Model.Theses != null && Model.Theses.Any())
+
+    {
+        <div class="row">
+            @foreach (var thesis in Model.Theses)
+
+            {
+
+                var culture = HttpContext.Features.Get<Microsoft.AspNetCore.Localization.IRequestCultureFeature>();
+
+                var cultureName = culture?.RequestCulture.UICulture.Name ?? "en";
+
+
+
+                string noCoverPageMessage = cultureName switch
+
+                {
+
+                    "ar" => "لا توجد صفحة غلاف",
+
+                    "fr" => "Pas de couverture",
+
+                    "es" => "Sin portada",
+
+                    _ => "No Cover Page"
+
+                };
+
+
+
+                var coverPageUrl = Url.Content($"~/images/coverPage/{thesis.Id}.jpg"); // Convert to an absolute URL path
+
+                var hasCoverPage = !string.IsNullOrEmpty(coverPageUrl); // Check if a cover page URL exists
+
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card border-light rounded shadow-sm">
+                        <div style="width: 100%; height: 200px; position: relative;">
+                            <img src="@coverPageUrl"
+                                 alt="Cover of @thesis.OriginalTitle"
+                                 onerror="this.style.display='none'; this.parentElement.querySelector('.no-cover-message').style.display='flex';"
+                                 style="width: 100%; height: 100%; object-fit: cover; display: @(hasCoverPage ? "block" : "none");">
+                            <div class="no-cover-message"
+                                 style="@(hasCoverPage ? "display: none;" : "display: flex;") align-items: center; justify-content: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #f0f0f0; color: #666; font-size: 12px; text-align: center;">
+                                @noCoverPageMessage
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate">@thesis.OriginalTitle</h5>
+                            <p class="card-text small">
+                                <strong>Date de défense:</strong> @thesis.DefenceDate<br />
+                                <strong>Editeur:</strong> @Model.Editor.Name<br />
+                                <strong>Thème:</strong> @string.Join(", ", Model.Themes.Select(t => t.Title))<br />
+                            </p>
+                            <a href="/Admin/Thesis/Details?id=@thesis.Id" class="btn btn-outline-primary btn-sm">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    else
+
+    {
+        <div class="alert alert-info" role="alert">
+            No results found.
+        </div>
+    }
+</div>
