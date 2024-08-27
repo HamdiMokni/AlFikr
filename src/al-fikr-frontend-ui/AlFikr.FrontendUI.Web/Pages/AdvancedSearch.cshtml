@@ -4,46 +4,49 @@
     ViewData["Title"] = "Advanced Search";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container d-flex justify-content-center mt-5 mb-5">
+    <div class="col-md-8">
 
-<form method="post" asp-page-handler="Search">
-    <div id="search-criteria-container" class="d-flex flex-column">
-        @for (var i = 0; i < Model.Criteria.AdvancedSearchEntities.Count; i++)
+        <h2 class="text-center mb-5">@ViewData["Title"]</h2>
 
+        <form method="post" asp-page-handler="Search">
+            <div id="search-criteria-container" class="d-flex flex-column">
+                @for (var i = 0; i < Model.Criteria.AdvancedSearchEntities.Count; i++)
 
+                {
+                    <div class="search-criterion d-flex align-items-center mb-2">
+                        <div class="d-flex flex-grow-1">
+                            <label for="Field">Field:</label>
+                            <select name="Criteria.AdvancedSearchEntities[@i].Field" class="form-control mx-2">
+                                <option value="OriginalTitle" selected="@(Model.Criteria.AdvancedSearchEntities[i].Field == "OriginalTitle")">Title</option>
+                                <option value="Author" selected="@(Model.Criteria.AdvancedSearchEntities[i].Field == "Author")">Author</option>
+                                <option value="Abstract" selected="@(Model.Criteria.AdvancedSearchEntities[i].Field == "Abstract")">Abstract</option>
+                                <!-- Add more fields as needed -->
+                            </select>
 
-        {
-            <div class="search-criterion d-flex align-items-center mb-2">
-                <div class="d-flex flex-grow-1">
-                    <label for="Field">Field:</label>
-                    <select name="Criteria.AdvancedSearchEntities[@i].Field" class="form-control mx-2">
-                        <option value="OriginalTitle" selected="@(Model.Criteria.AdvancedSearchEntities[i].Field == "OriginalTitle")">Title</option>
-                        <option value="Author" selected="@(Model.Criteria.AdvancedSearchEntities[i].Field == "Author")">Author</option>
-                        <option value="Abstract" selected="@(Model.Criteria.AdvancedSearchEntities[i].Field == "Abstract")">Abstract</option>
-                        <!-- Add more fields as needed -->
-                    </select>
+                            <label for="Expression">Value:</label>
+                            <input type="text" name="Criteria.AdvancedSearchEntities[@i].Expression" value="@Model.Criteria.AdvancedSearchEntities[i].Expression" class="form-control mx-2" />
 
-                    <label for="Expression">Value:</label>
-                    <input type="text" name="Criteria.AdvancedSearchEntities[@i].Expression" value="@Model.Criteria.AdvancedSearchEntities[i].Expression" class="form-control mx-2" />
-
-                    <label for="Operator">Operator:</label>
-                    <select name="Criteria.AdvancedSearchEntities[@i].Operator" class="form-control mx-2">
-                        <option value="AND" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "AND")">AND</option>
-                        <option value="OR" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "OR")">OR</option>
-                        <option value="NEAR" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "NEAR")">NEAR</option>
-                        <option value="BUT" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "BUT")">BUT</option>
-                    </select>
-                </div>
-                <button type="button" class="btn btn-danger btn-sm remove-criterion-btn" @(Model.Criteria.AdvancedSearchEntities.Count == 1 ? "disabled" : null)>-</button>
+                            <label for="Operator">Operator:</label>
+                            <select name="Criteria.AdvancedSearchEntities[@i].Operator" class="form-control mx-2">
+                                <option value="AND" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "AND")">AND</option>
+                                <option value="OR" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "OR")">OR</option>
+                                <option value="NEAR" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "NEAR")">NEAR</option>
+                                <option value="BUT" selected="@(Model.Criteria.AdvancedSearchEntities[i].Operator == "BUT")">BUT</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-criterion-btn" @(Model.Criteria.AdvancedSearchEntities.Count == 1 ? "disabled" : null)>-</button>
+                    </div>
+                }
             </div>
-        }
-    </div>
 
-    <div class="text-center mt-3">
-        <button type="button" id="add-criterion-btn" class="btn btn-secondary mr-2">Add Another Criterion</button>
-        <button type="submit" class="btn btn-primary">Search</button>
+            <div class="text-center mt-3">
+                <button type="button" id="add-criterion-btn" class="btn btn-secondary mr-2">Add Another Criterion</button>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
 @section Scripts {
     <script>
@@ -55,28 +58,28 @@
             const newCriterion = document.createElement('div');
             newCriterion.classList.add('search-criterion', 'd-flex', 'align-items-center', 'mb-2');
             newCriterion.innerHTML = `
-                                <div class="d-flex flex-grow-1">
-                                    <label for="Field">Field:</label>
-                                    <select name="Criteria.AdvancedSearchEntities[${criterionIndex}].Field" class="form-control mx-2">
-                                        <option value="OriginalTitle">Title</option>
-                                        <option value="Author">Author</option>
-                                        <option value="Abstract">Abstract</option>
-                                        <!-- Add more fields as needed -->
-                                    </select>
+                                        <div class="d-flex flex-grow-1">
+                                            <label for="Field">Field:</label>
+                                            <select name="Criteria.AdvancedSearchEntities[${criterionIndex}].Field" class="form-control mx-2">
+                                                <option value="OriginalTitle">Title</option>
+                                                <option value="Author">Author</option>
+                                                <option value="Abstract">Abstract</option>
+                                                <!-- Add more fields as needed -->
+                                            </select>
 
-                                    <label for="Expression">Value:</label>
-                                    <input type="text" name="Criteria.AdvancedSearchEntities[${criterionIndex}].Expression" class="form-control mx-2" />
+                                            <label for="Expression">Value:</label>
+                                            <input type="text" name="Criteria.AdvancedSearchEntities[${criterionIndex}].Expression" class="form-control mx-2" />
 
-                                    <label for="Operator">Operator:</label>
-                                    <select name="Criteria.AdvancedSearchEntities[${criterionIndex}].Operator" class="form-control mx-2">
-                                        <option value="AND">AND</option>
-                                        <option value="OR">OR</option>
-                                        <option value="NEAR">NEAR</option>
-                                        <option value="BUT">BUT</option>
-                                    </select>
-                                </div>
-                                <button type="button" class="btn btn-danger btn-sm remove-criterion-btn">-</button>
-                            `;
+                                            <label for="Operator">Operator:</label>
+                                            <select name="Criteria.AdvancedSearchEntities[${criterionIndex}].Operator" class="form-control mx-2">
+                                                <option value="AND">AND</option>
+                                                <option value="OR">OR</option>
+                                                <option value="NEAR">NEAR</option>
+                                                <option value="BUT">BUT</option>
+                                            </select>
+                                        </div>
+                                        <button type="button" class="btn btn-danger btn-sm remove-criterion-btn">-</button>
+                                    `;
             container.appendChild(newCriterion);
             criterionIndex++;
         }
@@ -111,8 +114,6 @@
 }
 
 <style>
-
-
     .btn-danger {
         border-radius: 50%;
         width: 40px;

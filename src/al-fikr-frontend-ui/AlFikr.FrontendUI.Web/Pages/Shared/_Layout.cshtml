@@ -97,7 +97,10 @@
                                             <div class="col-md-4">
                                                 <div class="input-submit">
                                                     <button type="button" onclick="simplesearch()" class="send-form">@localizer["Recherche Rapide"]</button>
-                                                    <button type="button" id="advancedSearch" data-bs-toggle="modal" data-bs-target="#advancedSearchModal" class="search-filter selectedarea">@localizer["Recherche Avancée"]</button>
+                                                    <a asp-page="/AdvancedSearch" asp-route-query="example" class="search-filter selectedarea btn btn-primary">
+                                                        @localizer["Recherche Avancée"]
+                                                    </a>
+
                                                 </div>
                                             </div>
                                         </div>
