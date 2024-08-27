@@ -32,10 +32,12 @@ namespace AlFikr.ThesisService.Business
 								supervisors.Add(new SupervisorEntity
 								{
 									Id = reader.GetInt32("Id"),
-									SupervisorName = reader.GetString("SupervisorName"),
-									SupervisorArName = reader.GetString("SupervisorArName"),
-									SupervisorTitle = reader.GetString("SupervisorTitle"),
-									AddedOn = reader.GetDateTime("AddedOn")
+									//gerer le cas de null , Update (26/08/2024) 
+									 SupervisorName = reader.IsDBNull(reader.GetOrdinal("SupervisorName")) ? null : reader.GetString("SupervisorName"),
+                                    SupervisorArName = reader.IsDBNull(reader.GetOrdinal("SupervisorArName")) ? null : reader.GetString("SupervisorArName"),
+                                    SupervisorTitle = reader.IsDBNull(reader.GetOrdinal("SupervisorTitle")) ? null : reader.GetString("SupervisorTitle"),
+                                    AddedOn = reader.IsDBNull(reader.GetOrdinal("AddedOn")) ? (DateTime?)null : reader.GetDateTime("AddedOn")
+             //end
 								});
 							}
 						}

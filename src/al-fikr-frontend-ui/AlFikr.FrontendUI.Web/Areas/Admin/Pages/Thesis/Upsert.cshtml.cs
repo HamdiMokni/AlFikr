@@ -123,22 +123,26 @@ public class ThesisModel : PageModel
 			Thesis.IdEditor = 1;
 
 			var response = await thesisServiceApiClient.UpsertThesisAsync(Thesis);
+            // affichage de message  (Update: 26/08/2024)
+            if (response.IsSuccessStatusCode && (attachmentCoverPage != null || attachmentDocument != null))
+            {
+                await UploadThesisAttachments(response);
+                TempData["SuccessMessage"] = "L'opération a été effectuée avec succès!";
+            }
+        }
+        catch (ApiException ex)
+        {
+            _logger.LogError(ex.Message);
+            TempData["ErrorMessage"] = $"Une erreur s'est produite lors de l'appel à l'API : {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            TempData["ErrorMessage"] = $"Une erreur inattendue s'est produite : {ex.Message}";
 
-			if (response.IsSuccessStatusCode && (attachmentCoverPage != null || attachmentDocument != null))
-			{
-				await UploadThesisAttachments(response);
-			}
-		}
-		catch (ApiException ex)
-		{
-			_logger.LogError(ex.Message);
-		}
-		catch (Exception ex)
-		{
-			_logger.LogError(ex.Message);
-		}
-
-		return RedirectToPage("Index");
+        }
+        //end
+        return RedirectToPage("Index");
 	}
 
 	private async Task UploadThesisAttachments(HttpResponseMessage response)

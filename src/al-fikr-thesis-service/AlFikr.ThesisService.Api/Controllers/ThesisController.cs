@@ -86,12 +86,13 @@ namespace AlFikr.ThesisService.Api.Controllers
 					_alFikrContext.Documentauthors.AddRange(thesisEntity.MainAuthorsIds
 						.Select(authorId => new Documentauthor { IdAuthor = int.Parse(authorId), IdDocument = thesis.Id, Role = "Author" }));
 				}
-
-				if (thesisEntity.SecondaryAuthorsIds?.Length > 0)
-				{
-					_alFikrContext.Documentauthors.AddRange(thesisEntity.SecondaryAuthorsIds
+				//gerer le cas de de valeur 0 Update (26-08-2024) 
+                if (thesisEntity.SecondaryAuthorsIds != null && thesisEntity.SecondaryAuthorsIds.Length != 0 && thesisEntity.SecondaryAuthorsIds[0] != "0")
+                {
+                    _alFikrContext.Documentauthors.AddRange(thesisEntity.SecondaryAuthorsIds
 						.Select(authorId => new Documentauthor { IdAuthor = int.Parse(authorId), IdDocument = thesis.Id, Role = "Co-Author" }));
 				}
+				//end
 
 				if (thesisEntity.ThemesIds?.Length > 0)
 				{
