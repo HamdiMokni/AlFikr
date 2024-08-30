@@ -58,7 +58,7 @@ namespace AlFikr.FrontendUI.Entities
 		public string State { get; set; }
 		[JsonPropertyName("price")]
 		public float Price { get; set; }
-		[JsonPropertyName("pubicationDate")]
+		[JsonPropertyName("publicationDate")]
 		public string? PublicationDate { get; set; }
 		[JsonPropertyName("country")]
 		public string Country { get; set; }

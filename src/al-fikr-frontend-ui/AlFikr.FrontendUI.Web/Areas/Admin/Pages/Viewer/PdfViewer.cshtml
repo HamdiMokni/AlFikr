@@ -1,0 +1,1068 @@
+﻿@* @page
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Viewer.PdfViewerModel
+@{
+    Layout = null; // Set to your layout if needed
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@localizer["PDF Viewer"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/izitoast/css/iziToast.min.css">
+    <style>
+        #controls-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        #pdf-controls, #search, #zoom-controls {
+            display: flex;
+            align-items: center;
+        }
+
+            #pdf-controls button, #search input, #search button, #zoom-controls button {
+                margin-right: 5px;
+            }
+
+        #pdf-viewer {
+            position: relative;
+            border: 1px solid #ddd;
+            margin: 10px auto;
+            max-width: 90%;
+            width: 80%;
+        }
+
+        #pdf-canvas {
+            width: 100%;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <h2>@localizer["PDF Viewer"]</h2>
+        <div id="controls-container">
+            <div id="pdf-controls" class="btn-group">
+                <button id="prev-page" class="btn btn-primary" aria-label="Previous Page">Previous</button>
+                <span class="mx-2">Page: <span id="page-num">1</span> of <span id="page-count">0</span></span>
+                <button id="next-page" class="btn btn-primary" aria-label="Next Page">Next</button>
+            </div>
+            <div id="zoom-controls" class="btn-group">
+                <button id="zoom-out" class="btn btn-secondary" aria-label="Zoom Out">-</button>
+                <span id="zoom-level" class="mx-2">100%</span>
+                <button id="zoom-in" class="btn btn-secondary" aria-label="Zoom In">+</button>
+            </div>
+            <div id="search" class="form-inline">
+                <input type="text" id="search-input" class="form-control mr-2" aria-label="Search Text" placeholder="Search text...">
+                <button id="search-button" class="btn btn-success" aria-label="Search">Search</button>
+            </div>
+        </div>
+        <div id="pdf-viewer">
+            <canvas id="pdf-canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        const url = '@Url.Content(Model.PdfFilePath)';
+        let pdfDoc = null,
+            pageNum = 1,
+            pageIsRendering = false,
+            pageNumIsPending = null,
+            scale = 1.5, // Initial zoom scale
+            canvas = document.getElementById('pdf-canvas'),
+            ctx = canvas.getContext('2d');
+
+        const renderPage = (num, highlights = []) => {
+            pageIsRendering = true;
+
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderCtx = {
+                    canvasContext: ctx,
+                    viewport
+                };
+
+                page.render(renderCtx).promise.then(() => {
+                    pageIsRendering = false;
+
+                    if (pageNumIsPending !== null) {
+                        renderPage(pageNumIsPending, highlights);
+                        pageNumIsPending = null;
+                    }
+
+                    // Highlight text
+                    highlights.forEach(highlight => {
+                        const { x, y, width, height } = highlight;
+                        ctx.beginPath();
+                        ctx.rect(x, y, width, height);
+                        ctx.fillStyle = 'rgba(255, 255, 0, 0.5)'; // Yellow highlight
+                        ctx.fill();
+                        ctx.closePath();
+                    });
+                });
+
+                document.querySelector('#page-num').textContent = num;
+            });
+        };
+
+        const queueRenderPage = (num, highlights) => {
+            if (pageIsRendering) {
+                pageNumIsPending = num;
+            } else {
+                renderPage(num, highlights);
+            }
+        };
+
+        document.querySelector('#prev-page').addEventListener('click', () => {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#next-page').addEventListener('click', () => {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#zoom-in').addEventListener('click', () => {
+            scale += 0.2; // Increase zoom scale
+            document.querySelector('#zoom-level').textContent = `${Math.round(scale * 100)}%`;
+            renderPage(pageNum);
+        });
+
+        document.querySelector('#zoom-out').addEventListener('click', () => {
+            scale = Math.max(0.2, scale - 0.2); // Decrease zoom scale, with a minimum value of 0.2
+            document.querySelector('#zoom-level').textContent = `${Math.round(scale * 100)}%`;
+            renderPage(pageNum);
+        });
+
+        pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+            pdfDoc = pdfDoc_;
+            document.querySelector('#page-count').textContent = pdfDoc.numPages;
+            renderPage(pageNum);
+        }).catch(() => {
+            document.querySelector('#pdf-viewer').innerHTML = '<p>Error loading PDF document.</p>';
+        });
+
+        document.querySelector('#search-button').addEventListener('click', () => {
+            const searchText = document.querySelector('#search-input').value;
+            if (!searchText) return;
+
+            let found = false;
+            let searchPromises = [];
+
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                searchPromises.push(
+                    pdfDoc.getPage(i).then(page =>
+                        page.getTextContent().then(textContent => {
+                            const textItems = textContent.items;
+                            const text = textItems.map(item => item.str).join(' ');
+                            const matches = [];
+                            let charIndex = 0;
+
+                            // Find all positions of the search text
+                            while (charIndex < text.length) {
+                                const index = text.indexOf(searchText, charIndex);
+                                if (index === -1) break;
+
+                                matches.push({ index, length: searchText.length });
+                                charIndex = index + searchText.length;
+                            }
+
+                            if (matches.length > 0) {
+                                pageNum = i;
+                                page.getTextContent().then(textContent => {
+                                    const highlights = textContent.items
+                                        .map(item => {
+                                            const { transform, width, height } = item;
+                                            const str = item.str;
+                                            const index = text.indexOf(searchText);
+
+                                            if (index !== -1) {
+                                                const startX = transform[4] + item.width * (index / str.length);
+                                                const startY = transform[5] - height;
+                                                return {
+                                                    x: startX,
+                                                    y: startY,
+                                                    width: item.width * (searchText.length / str.length),
+                                                    height: height
+                                                };
+                                            }
+                                        })
+                                        .filter(highlight => highlight !== undefined);
+
+                                    queueRenderPage(pageNum, highlights);
+                                });
+                                found = true;
+                            }
+                        })
+                    )
+                );
+            }
+
+            Promise.all(searchPromises).then(() => {
+                if (!found) {
+                    iziToast.error({
+                        title: 'Not Found',
+                        message: 'Search text not found in the document.',
+                        position: 'topRight'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
+ *@
+
+@*  // update number 2
+ *@
+
+@* 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@localizer["PDF Viewer"]</title>
+     <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+    <link rel="stylesheet" href="~/lib/izitoast/css/iziToast.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #e9ecef;
+            height: 40px;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 200px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 10px;
+        }
+
+        #pdf-viewer {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #f1f3f4;
+            overflow: auto;
+        }
+
+        #pdf-canvas {
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .thumbnail {
+            width: 100%;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        #zoom-controls {
+            display: flex;
+            align-items: center;
+        }
+
+            #zoom-controls button {
+                margin-right: 5px;
+            }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <select id="language-select">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+        <div class="logo">Al-fikr</div>
+        <h1>@localizer["Code du droit d'occupation"]</h1>
+        <select id="language-select">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+    </div>
+    <div class="controls">
+        <div id="pdf-controls" class="btn-group">
+            <button id="prev-page" class="btn btn-primary btn-sm" aria-label="Previous Page"><span class="glyphicon glyphicon-share-alt"></span></button>
+            <span class="mx-2">Page: <span id="page-num">1</span> of <span id="page-count">0</span></span>
+            <button id="next-page" class="btn btn-primary btn-sm" aria-label="Next Page"><span class="glyphicon glyphicon-share-alt"></span></button>
+        </div>
+        <div id="zoom-controls" class="btn-group">
+            <button id="zoom-out" class="btn btn-secondary btn-sm" aria-label="Zoom Out">-</button>
+            <span id="zoom-level" class="mx-2">100%</span>
+            <button id="zoom-in" class="btn btn-secondary btn-sm" aria-label="Zoom In">+</button>
+        </div>
+        <div id="search" class="form-inline">
+            <input type="text" id="search-input" class="form-control mr-2" aria-label="Search Text" placeholder="Search text...">
+            <button id="search-button" class="btn btn-success btn-sm" aria-label="Search">Search</button>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="sidebar" id="thumbnail-container"></div>
+        <div id="pdf-viewer">
+            <canvas id="pdf-canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+
+        const url = '@Url.Content(Model.PdfFilePath)';
+        let pdfDoc = null,
+            pageNum = 1,
+            pageIsRendering = false,
+            pageNumIsPending = null,
+            scale = 1.5,
+            canvas = document.getElementById('pdf-canvas'),
+            ctx = canvas.getContext('2d');
+
+        const renderPage = (num, highlights = []) => {
+            pageIsRendering = true;
+
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderCtx = {
+                    canvasContext: ctx,
+                    viewport
+                };
+
+                page.render(renderCtx).promise.then(() => {
+                    pageIsRendering = false;
+
+                    if (pageNumIsPending !== null) {
+                        renderPage(pageNumIsPending, highlights);
+                        pageNumIsPending = null;
+                    }
+
+                    // Highlight text
+                    highlights.forEach(highlight => {
+                        const { x, y, width, height } = highlight;
+                        ctx.beginPath();
+                        ctx.rect(x, y, width, height);
+                        ctx.fillStyle = 'rgba(255, 255, 0, 0.5)'; // Yellow highlight
+                        ctx.fill();
+                        ctx.closePath();
+                    });
+                });
+
+                document.querySelector('#page-num').textContent = num;
+            });
+        };
+
+        const queueRenderPage = (num, highlights) => {
+            if (pageIsRendering) {
+                pageNumIsPending = num;
+            } else {
+                renderPage(num, highlights);
+            }
+        };
+
+        document.querySelector('#prev-page').addEventListener('click', () => {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#next-page').addEventListener('click', () => {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#zoom-in').addEventListener('click', () => {
+            scale += 0.2;
+            document.querySelector('#zoom-level').textContent = `${Math.round(scale * 100)}%`;
+            renderPage(pageNum);
+        });
+
+        document.querySelector('#zoom-out').addEventListener('click', () => {
+            scale = Math.max(0.2, scale - 0.2);
+            document.querySelector('#zoom-level').textContent = `${Math.round(scale * 100)}%`;
+            renderPage(pageNum);
+        });
+
+        pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+            pdfDoc = pdfDoc_;
+            document.querySelector('#page-count').textContent = pdfDoc.numPages;
+            renderPage(pageNum);
+
+            // Generate thumbnails
+            const thumbnailContainer = document.getElementById('thumbnail-container');
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                pdfDoc.getPage(i).then(function (page) {
+                    let viewport = page.getViewport({ scale: 0.1 });
+                    let canvas = document.createElement('canvas');
+                    canvas.className = 'thumbnail';
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
+                    canvas.onclick = function () {
+                        pageNum = i;
+                        renderPage(pageNum);
+                    };
+                    thumbnailContainer.appendChild(canvas);
+                });
+            }
+        }).catch(() => {
+            document.querySelector('#pdf-viewer').innerHTML = '<p>Error loading PDF document.</p>';
+        });
+
+        document.querySelector('#search-button').addEventListener('click', () => {
+            const searchText = document.querySelector('#search-input').value;
+            if (!searchText) return;
+
+            let found = false;
+            let searchPromises = [];
+
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                searchPromises.push(
+                    pdfDoc.getPage(i).then(page =>
+                        page.getTextContent().then(textContent => {
+                            const textItems = textContent.items;
+                            const text = textItems.map(item => item.str).join(' ');
+                            const matches = [];
+                            let charIndex = 0;
+
+                            // Find all positions of the search text
+                            while (charIndex < text.length) {
+                                const index = text.indexOf(searchText, charIndex);
+                                if (index === -1) break;
+
+                                matches.push({ index, length: searchText.length });
+                                charIndex = index + searchText.length;
+                            }
+
+                            if (matches.length > 0) {
+                                pageNum = i;
+                                page.getTextContent().then(textContent => {
+                                    const highlights = textContent.items
+                                        .map(item => {
+                                            const { transform, width, height } = item;
+                                            const str = item.str;
+                                            const index = text.indexOf(searchText);
+
+                                            if (index !== -1) {
+                                                const startX = transform[4] + item.width * (index / str.length);
+                                                const startY = transform[5] - height;
+                                                return {
+                                                    x: startX,
+                                                    y: startY,
+                                                    width: item.width * (searchText.length / str.length),
+                                                    height: height
+                                                };
+                                            }
+                                        })
+                                        .filter(highlight => highlight !== undefined);
+
+                                    queueRenderPage(pageNum, highlights);
+                                });
+                                found = true;
+                            }
+                        })
+                    )
+                );
+            }
+
+            Promise.all(searchPromises).then(() => {
+                if (!found) {
+                    iziToast.error({
+                        title: 'Not Found',
+                        message: 'Search text not found in the document.',
+                        position: 'topRight'
+                    });
+                }
+            });
+        });
+
+        document.getElementById('language-select').addEventListener('change', function (e) {
+            // Here you would implement the language change logic
+            console.log('Language changed to: ' + e.target.value);
+        });
+    </script>
+</body>
+</html> *@
+
+
+@page
+@model AlFikr.FrontendUI.Web.Areas.Admin.Pages.Viewer.PdfViewerModel
+@{
+    Layout = null; // Set to your layout if needed
+} 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@localizer["PDF Viewer"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="icon" href="~/images/logo.png" />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="~/lib/izitoast/css/iziToast.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .header, .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .header {
+            margin-bottom: -10px;
+          
+          
+        }
+        .inverted-icon {
+            transform: rotate(180deg);
+            display: inline-block;
+        }
+
+        .controls {
+            justify-content: space-between;
+            background-color: #3c3e41;
+            color: white;
+            height: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 200px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            padding: 10px;
+            transition: width 0.3s ease;
+        }
+
+            .sidebar.hidden {
+                width: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+
+        #pdf-viewer {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-color: #f1f3f4;
+            overflow: auto;
+        }
+
+        #pdf-canvas {
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .thumbnail {
+            width: 100%;
+            margin-bottom: 10px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        #zoom-controls {
+            display: flex;
+            align-items: center;
+        }
+
+            #zoom-controls button {
+                margin-right: 5px;
+            }
+
+        .highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 0, 0.5);
+        }
+
+        #toggle-sidebar {
+            background-color: #3c3e41;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        #search-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        #search-icon {
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        #search-input-container {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 10px;
+            background-color: #3c3e41;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+            z-index: 1000;
+            flex-direction: row;
+            align-items: center;
+        }
+
+
+        #search-input {
+            width: 200px;
+            height:25px;
+            padding: 5px;
+/*             border: none;
+ */            outline: none;
+            color: black;
+            margin-right: 10px;
+        }
+
+        #search-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+        }
+
+            #search-options label {
+                font-size: 12px;
+                color: white;
+            }
+
+        .highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 0, 0.5);
+            cursor: pointer;
+        }
+
+        #pdf-controls {
+            display: flex;
+            align-items: center;
+            margin-left:10px;
+        }
+
+        .controls-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .center-controls {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <select id="language-select">
+            <option value="fr">Français</option>
+            <option value="en">English</option>
+        </select>
+        <div ><img src="~/images/logo.png" /></div>
+        <h1>@localizer["Code du droit d'occupation"]</h1>
+        <button class="btn btn-default" href="javascript:void(0);" data-toggle="modal" data-target="#SummaryModal" style="width:100px;height:35px;background:#ecb43a;color:#fff;font-weight:bold;font-size:12px">
+            <i class="fa fa-list-ul"></i> @localizer["Sommaire"]
+        </button>
+    </div>
+    <div class="controls">
+        <div class="left-controls">
+            <button id="toggle-sidebar" aria-label="Toggle Sidebar" class="btn btn-secondary"><i class="glyphicon glyphicon-list-alt"></i></button>
+            @* <div id="search" class="form-inline">
+                <input type="text" id="search-input" class="form-control mr-2" aria-label="Search Text" placeholder="Search text...">
+                <button id="search-button" class="btn btn-secondary btn-sm" aria-label="Search"><i class="glyphicon glyphicon-search"></i></button>
+            </div> *@
+           @*  <div id="search-container">
+                <span id="search-icon" class="glyphicon glyphicon-search"></span>
+                <div id="search-input-container">
+                    <input type="text" id="search-input" placeholder="Rechercher...">
+                    <div id="search-options">
+                        <label><input type="checkbox" id="highlight-all"> Tout surligner</label>
+                        <label><input type="checkbox" id="match-case"> Respecter la casse</label>
+                        <label><input type="checkbox" id="whole-words"> Mots entiers</label>
+                    </div>
+                </div>
+            </div> *@
+
+            <div id="search-container">
+               <button class="btn btn-secondary btn-sm" ><span id="search-icon" class="glyphicon glyphicon-search"></span></button>
+                <div id="search-input-container">
+                    <input type="text" id="search-input" placeholder="Rechercher...">
+                    <button class="btn btn-secondary btn-sm"><i class="glyphicon glyphicon-arrow-left"></i></button>
+                    <button class="btn btn-secondary btn-sm"><i class="glyphicon glyphicon-arrow-right"></i></button>
+                    <div id="search-options">
+                       
+                        <label><input type="checkbox" id="highlight-all"> Tout surligner</label>
+                        <label><input type="checkbox" id="match-case"> Respecter la casse</label>
+                        <label><input type="checkbox" id="whole-words"> Mots entiers</label>
+                    </div>
+                </div>
+            </div>
+            <div id="pdf-controls" class="btn-group">
+                <button id="prev-page" class="btn btn-secondary btn-sm" aria-label="Previous Page">
+                    <span class="glyphicon glyphicon-share-alt"></span>
+                </button>
+                <span class="mx-2">Page: <span id="page-num">1</span> of <span id="page-count">0</span></span>
+                <button id="next-page" class="btn btn-secondary btn-sm" aria-label="Next Page">
+                    <i class="glyphicon glyphicon-share-alt inverted-icon"></i>
+                </button>
+            </div>
+        </div>
+        <div class="center-controls">
+            <div id="zoom-controls" class="btn-group">
+                <button id="zoom-out" class="btn btn-secondary btn-sm" aria-label="Zoom Out">-</button>
+                <span id="zoom-level" class="mx-2">100%</span>
+                <button id="zoom-in" class="btn btn-secondary btn-sm" aria-label="Zoom In">+</button>
+            </div>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="sidebar" id="thumbnail-container"></div>
+        <div id="pdf-viewer">
+            <canvas id="pdf-canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+
+        const url = '@Url.Content(Model.PdfFilePath)';
+        let pdfDoc = null,
+            pageNum = 1,
+            pageIsRendering = false,
+            pageNumIsPending = null,
+            scale = 1.5,
+            canvas = document.getElementById('pdf-canvas'),
+            ctx = canvas.getContext('2d');
+
+        // const renderPage = (num) => {
+        //     pageIsRendering = true;
+
+        //     pdfDoc.getPage(num).then(page => {
+        //         const viewport = page.getViewport({ scale });
+        //         canvas.height = viewport.height;
+        //         canvas.width = viewport.width;
+
+        //         const renderCtx = {
+        //             canvasContext: ctx,
+        //             viewport
+        //         };
+
+        //         page.render(renderCtx).promise.then(() => {
+        //             pageIsRendering = false;
+
+        //             if (pageNumIsPending !== null) {
+        //                 renderPage(pageNumIsPending);
+        //                 pageNumIsPending = null;
+        //             }
+        //         });
+
+        //         document.querySelector('#page-num').textContent = num;
+        //     });
+        // };
+
+        const queueRenderPage = (num) => {
+            if (pageIsRendering) {
+                pageNumIsPending = num;
+            } else {
+                renderPage(num);
+            }
+        };
+
+        document.querySelector('#prev-page').addEventListener('click', () => {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#next-page').addEventListener('click', () => {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#zoom-in').addEventListener('click', () => {
+            scale += 0.2;
+            document.querySelector('#zoom-level').textContent = `${Math.round(scale * 100)}%`;
+            queueRenderPage(pageNum);
+        });
+
+        document.querySelector('#zoom-out').addEventListener('click', () => {
+            scale = Math.max(0.2, scale - 0.2);
+            document.querySelector('#zoom-level').textContent = `${Math.round(scale * 100)}%`;
+            queueRenderPage(pageNum);
+        });
+
+        pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+            pdfDoc = pdfDoc_;
+            document.querySelector('#page-count').textContent = pdfDoc.numPages;
+            renderPage(pageNum);
+
+            // Generate thumbnails
+            const thumbnailContainer = document.getElementById('thumbnail-container');
+            for (let i = 1; i <= pdfDoc.numPages; i++) {
+                pdfDoc.getPage(i).then(function (page) {
+                    let viewport = page.getViewport({ scale: 0.1 });
+                    let canvas = document.createElement('canvas');
+                    canvas.className = 'thumbnail';
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+                    page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport });
+                    canvas.onclick = function () {
+                        pageNum = i;
+                        queueRenderPage(pageNum);
+                    };
+                    thumbnailContainer.appendChild(canvas);
+                });
+            }
+        }).catch(() => {
+            document.querySelector('#pdf-viewer').innerHTML = '<p>Error loading PDF document.</p>';
+        });
+
+        // Toggle sidebar functionality
+        const toggleSidebarButton = document.getElementById('toggle-sidebar');
+        const sidebar = document.getElementById('thumbnail-container');
+
+        toggleSidebarButton.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        });
+
+        // Improved search functionality
+        const searchIcon = document.getElementById('search-icon');
+        const searchInputContainer = document.getElementById('search-input-container');
+        const searchInput = document.getElementById('search-input');
+        const highlightAllCheckbox = document.getElementById('highlight-all');
+        const matchCaseCheckbox = document.getElementById('match-case');
+        const wholeWordsCheckbox = document.getElementById('whole-words');
+
+        searchIcon.addEventListener('click', () => {
+            searchInputContainer.style.display = searchInputContainer.style.display === 'none' ? 'block' : 'none';
+            if (searchInputContainer.style.display === 'block') {
+                searchInput.focus();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!searchInputContainer.contains(event.target) && event.target !== searchIcon) {
+                searchInputContainer.style.display = 'none';
+            }
+        });
+
+        const performSearch = () => {
+            const searchText = searchInput.value.trim();
+            if (!searchText) return;
+
+            const highlightAll = highlightAllCheckbox.checked;
+            const matchCase = matchCaseCheckbox.checked;
+            const wholeWords = wholeWordsCheckbox.checked;
+
+            let currentPage = pageNum;
+            let found = false;
+            const highlights = [];
+
+            const searchNextPage = () => {
+                if (currentPage > pdfDoc.numPages) {
+                    if (!found) {
+                        alert('Aucun résultat trouvé.');
+                    }
+                    return;
+                }
+
+                pdfDoc.getPage(currentPage).then(page => {
+                    page.getTextContent().then(textContent => {
+                        const textItems = textContent.items;
+                        const pageHighlights = [];
+
+                        textItems.forEach(item => {
+                            let itemText = item.str;
+                            let searchRegex;
+
+                            if (wholeWords) {
+                                searchRegex = new RegExp(`\\b${searchText}\\b`, matchCase ? 'g' : 'gi');
+                            } else {
+                                searchRegex = new RegExp(searchText, matchCase ? 'g' : 'gi');
+                            }
+
+                            let match;
+                            while ((match = searchRegex.exec(itemText)) !== null) {
+                                found = true;
+                                const { transform, width, height } = item;
+
+                                const x = transform[4] + (width * (match.index / itemText.length));
+                                const highlightWidth = width * (searchText.length / itemText.length);
+                                const y = transform[5] - height;
+
+                                pageHighlights.push({
+                                    x, y, width: highlightWidth, height, pageNum: currentPage
+                                });
+
+                                if (!highlightAll) break;
+                            }
+                        });
+
+                        highlights.push(...pageHighlights);
+
+                        if (pageHighlights.length > 0 && !highlightAll) {
+                            showHighlights(highlights);
+                        } else {
+                            currentPage++;
+                            searchNextPage();
+                        }
+                    });
+                });
+            };
+
+            searchNextPage();
+        };
+
+        const showHighlights = (highlights) => {
+            // Supprimer les surlignages existants
+            document.querySelectorAll('.highlight').forEach(el => el.remove());
+
+            highlights.forEach(highlight => {
+                if (highlight.pageNum === pageNum) {
+                    const highlightElement = document.createElement('div');
+                    highlightElement.className = 'highlight';
+                    highlightElement.style.left = `${highlight.x}px`;
+                    highlightElement.style.top = `${highlight.y}px`;
+                    highlightElement.style.width = `${highlight.width}px`;
+                    highlightElement.style.height = `${highlight.height}px`;
+                    document.querySelector('#pdf-viewer').appendChild(highlightElement);
+                }
+            });
+
+            if (highlights.length > 0 && highlights[0].pageNum !== pageNum) {
+                pageNum = highlights[0].pageNum;
+                queueRenderPage(pageNum);
+            }
+        };
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        const renderPage = (num) => {
+            pageIsRendering = true;
+
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderCtx = {
+                    canvasContext: ctx,
+                    viewport
+                };
+
+                page.render(renderCtx).promise.then(() => {
+                    pageIsRendering = false;
+
+                    if (pageNumIsPending !== null) {
+                        renderPage(pageNumIsPending);
+                        pageNumIsPending = null;
+                    }
+
+                    document.querySelector('#page-num').textContent = num;
+
+                    // Réappliquer les surlignages après le rendu
+                    performSearch();
+                });
+            });
+        };
+    </script>
+</body>
+</html>

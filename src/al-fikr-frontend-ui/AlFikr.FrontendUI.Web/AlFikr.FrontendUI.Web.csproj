@@ -38,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Areas\Admin\Pages\Viewer\PdfViewer.cshtml" />
     <None Include="wwwroot\js\Theme.js" />
     <None Include="wwwroot\js\Author.js" />
     <None Include="wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />

@@ -72,7 +72,7 @@ namespace AlFikr.ThesisService.Entities
 		public string? AccessType { get; set; }
 		[JsonPropertyName("state")]
 		public string? State { get; set; }
-		[JsonPropertyName("pubicationDate")]
+		[JsonPropertyName("publicationDate")]
 		//[Required(ErrorMessage = "Champ Obligatoire")]
 		public string? PublicationDate { get; set; }
 		[JsonPropertyName("country")]
